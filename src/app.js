@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
+const authRoutes = require("./routes/auth.route");
 
 dotenv.config();
 
@@ -14,6 +15,9 @@ app.use(morgan('dev'));
 app.get('/', (req, res) => {
   res.send("Server is healthy!")
 })
+
+// Routes
+app.use("/api/v1/", authRoutes);
 
 // MongoDB connection
 mongoose.connect(process.env.DB_URI)
