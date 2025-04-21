@@ -5,6 +5,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
 const authRoutes = require("./routes/auth.route");
+const workshopRoutes = require("./routes/workshop.route");
 
 dotenv.config();
 
@@ -18,6 +19,7 @@ app.get('/', (req, res) => {
 
 // Routes
 app.use("/api/v1/", authRoutes);
+app.use("/api/v1/workshops", workshopRoutes);
 
 // MongoDB connection
 mongoose.connect(process.env.DB_URI)
