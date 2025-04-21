@@ -30,7 +30,6 @@ workshopSchema = new mongoose.Schema({
       required: true,
       trim: true
     },
-    required: true
   },
   resource: [String],
   location: {
@@ -44,4 +43,4 @@ workshopSchema = new mongoose.Schema({
   }]
 }, { timestamps: true })
 
-const Workshop = mongoose.model('Workshop', workshopSchema);
+module.exports = mongoose.model('Workshop', workshopSchema);
