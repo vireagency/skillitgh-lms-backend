@@ -6,6 +6,7 @@ const dotenv = require('dotenv');
 const morgan = require('morgan');
 const authRoutes = require("./routes/auth.route");
 const workshopRoutes = require("./routes/workshop.route");
+const courseRoutes = require("./routes/course.route");
 
 dotenv.config();
 
@@ -18,8 +19,7 @@ app.get('/', (req, res) => {
 })
 
 // Routes
-app.use("/api/v1/", authRoutes);
-app.use("/api/v1/workshops", workshopRoutes);
+app.use("/api/v1/", authRoutes, workshopRoutes, courseRoutes);
 
 // MongoDB connection
 mongoose.connect(process.env.DB_URI)
