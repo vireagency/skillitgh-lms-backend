@@ -25,14 +25,20 @@ exports.register = async (req, res) => {
       email: email,
       password: hashedPassword
     })
-
+    // check if user is created successfully
+    if (!newUser) {
+      return res.status(400).json({ success: false, message: "User not created!" });
+    }
+    const userWithoutPassword = newUser.toObject();
+    delete userWithoutPassword.password;
+    
     // generate token
     const generatedToken = (userId) => {
       return jwt.sign({ id: userId }, process.env.PRIVATE_KEY, { expiresIn: "1d" });
     }
 
     // save new user to db
-    const savedUser = await newUser.save();
+    const savedUser = await userWithoutPassword.save();
     res.status(201).json({ success: true, message: "User registered successfully!", user: savedUser, generatedToken: generatedToken(savedUser._id) });
   } catch (err) {
     console.error("Error in registering user: ", err);
@@ -59,7 +65,7 @@ exports.signIn = async (req, res) => {
       return res.status(400).json({ success: false, message: "User does not exist!" });
     }
     // generate token
-    const accessToken = jwt.sign({ id: existingUser._id, email: existingUser.email }, process.env.PRIVATE_KEY, { expiresIn : "1d" })
+    const accessToken = jwt.sign({ id: existingUser._id, email: existingUser.email, role: existingUser.role }, process.env.PRIVATE_KEY, { expiresIn : "1d" })
     // remove password from user object
     const { password: _ , ...userObject } = existingUser._doc; 
     const user = { ...userObject };

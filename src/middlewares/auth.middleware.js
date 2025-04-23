@@ -11,7 +11,7 @@ exports.auth = async (req, res, next) => {
     // verify token
     const decoded = jwt.verify(token, process.env.PRIVATE_KEY);
     // Attach user info to the request
-    req.user = await User.findById(decoded.id).select("-password -__v");
+    req.user = await User.findById(decoded.id);
     if (!req.user) {
       return res.status(401).json({ success: false, message: "Invalid token. Access denied." });
     }
