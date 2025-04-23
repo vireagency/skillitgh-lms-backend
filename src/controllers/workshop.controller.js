@@ -18,7 +18,7 @@ exports.getUpcomingWorkshops = async (req, res) => {
 exports.getPreviousWorkshops = async (req, res) => {
   try {
     const today = new Date();
-    const previousWorkshops = await Workshop.find({ date: { $lt: today }}).populate("attendees facilitator").sort({ date: 1 });
+    const previousWorkshops = await Workshop.find({ date: { $lt: today }});
     if (!previousWorkshops || previousWorkshops.length === 0) {
       return res.status(404).json({ success: false, message: "No previous workshops found!" });
     }
@@ -94,23 +94,22 @@ exports.deleteWorkshop = async (req, res) => {
 exports.registerForWorkshop = async (req, res) => {
   try {
     const { workshopId } = req.params;
-    const { userId } = req.user;
+    const { id } = req.user;
 
     const workshop = await Workshop.findById(workshopId);
-    if (workshop) {
+    if (!workshop) {
       return res.status(404).json({ success: false, message: "Workshop not found!" });
     }
-    const user = await User.findById(userId);
-    if (user) {
+    const user = await User.findById(id);
+    if (!user) {
       return res.status(404).json({ success: false, message: "User not found!" });
     }
-    if (workshop.attendees.includes(userId)) {
+    if (workshop.attendees.includes(id)) {
       return res.status(400).json({ success: false, message: "You are already registered for this workshop!" });
     }
 
-    workshop.attendees.push(userId);
+    workshop.attendees.push(id);
     await workshop.save();
-    await user.save();
 
     res.status(200).json({ success: true, message: "Successfully registered for the workshop!", workshop });
 
