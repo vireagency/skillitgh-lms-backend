@@ -11,7 +11,10 @@ exports.auth = async (req, res, next) => {
     // verify token
     const decoded = jwt.verify(token, process.env.PRIVATE_KEY);
     // Attach user info to the request
-    req.user = await User.findById(decoded.id);
+    req.user = await User.findById(decoded.id).select("-password -__v");
+    if (!req.user) {
+      return res.status(401).json({ message: "Invalid token. Access denied." });
+    }
     next();
   } catch (err) {
     console.error("Invalid or expired token", err.message);
