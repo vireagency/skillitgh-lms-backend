@@ -27,7 +27,6 @@ const courseSchema = new mongoose.Schema({
     type: Date,
     required: true
   },
-  externalFormLink: String,
   enrolledUsers: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
