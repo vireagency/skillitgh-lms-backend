@@ -7,30 +7,7 @@ const courseSchema = new mongoose.Schema({
   },
   description: {
     type: String,
-    required: true
   },
-  instructor: {
-    name: {
-      type: String,
-      required: true
-    },
-    email: {
-      type: String,
-      required: true
-    }
-  },
-  duration: {
-    type: String,
-    required: true
-  },
-  date: {
-    type: Date,
-    required: true
-  },
-  enrolledUsers: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
-  }]
-});
+}, { timestamps: true });
 
 module.exports = mongoose.model('Course', courseSchema);
