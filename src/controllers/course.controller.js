@@ -25,8 +25,7 @@ exports.getCourseById = async (req, res) => {
     res.status(200).json({ success: true, message: "Successfully fetched course by Id", course });
   } catch (error) {
     console.error("Error in fetching this course by Id:", error);
-    res.status(500).sjon({ success: false, message: "Internal Server Error" });
-  }
+    res.status(500).json({ success: false, message: "Internal Server Error" });
 }
  
 // @desc     Register for a course
