@@ -1,4 +1,3 @@
-
 const authorizeRole = (access) => {
   return (req, res, next) => {
     try {
@@ -32,3 +31,5 @@ const authorizeRole = (access) => {
     }
   };
 }
+
+module.exports = { authorizeRole };
