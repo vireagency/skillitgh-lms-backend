@@ -1,12 +1,11 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const Workshop = require('../models/workshop.model');
-
-dotenv.config();
+const { connectDB } = require('../config/db');
 
 const seedWorkshops = async () => {
   try {
-    await mongoose.connect(process.env.DB_URI);
+    connectDB();
 
     await Workshop.deleteMany(); // Clear existing
 
