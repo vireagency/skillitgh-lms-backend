@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { auth } = require('../middlewares/auth.middleware');
+const { authorizeRole } = require('../middlewares/role.middleware');
 const {
    getUpcomingWorkshops,
    getPreviousWorkshops,
@@ -38,6 +39,6 @@ router.post('/workshops/:workshopId/register',auth, registerForWorkshop);
  * @desc       Create a new workshop
  * @access     Private
  */
-router.post('/workshops/', createWorkshop);
+router.post('/workshops/', auth, authorizeRole('admin'), createWorkshop);
 
 module.exports = router;
