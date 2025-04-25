@@ -26,6 +26,8 @@ exports.getCourseById = async (req, res) => {
   } catch (error) {
     console.error("Error in fetching this course by Id:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
+
+  }
 }
  
 // @desc     Register for a course
@@ -102,7 +104,7 @@ exports.getRegisteredUsers = async (req, res) => {
       return res.status(404).json({ success: false, message: "No users found for this course!" });
     }
     const registrationIds = registrations.map(reg => reg.enrolledUser);
-    
+
     const users = await User.find({ _id: { $in: registrationIds }}).sort('createdAt:-1');
 
     if (!users || users.length === 0) {
