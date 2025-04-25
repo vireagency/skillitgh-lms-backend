@@ -29,8 +29,6 @@ exports.register = async (req, res) => {
     if (!newUser) {
       return res.status(400).json({ success: false, message: "User not created!" });
     }
-    const userWithoutPassword = newUser.toObject();
-    delete userWithoutPassword.password;
     
     // generate token
     const generatedToken = (userId) => {
@@ -38,8 +36,10 @@ exports.register = async (req, res) => {
     }
 
     // save new user to db
-    const savedUser = await userWithoutPassword.save();
-    res.status(201).json({ success: true, message: "User registered successfully!", user: savedUser, generatedToken: generatedToken(savedUser._id) });
+    const savedUser = await newUser.save();
+    const userWithoutPassword = savedUser.toObject();
+    delete userWithoutPassword.password; // remove password from user object
+    res.status(201).json({ success: true, message: "User registered successfully!", user: userWithoutPassword, generatedToken: generatedToken(savedUser._id) });
   } catch (err) {
     console.error("Error in registering user: ", err);
     res.status(500).json({ success: false, message: "Internal Server Error" });
