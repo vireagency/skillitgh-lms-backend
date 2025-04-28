@@ -21,7 +21,7 @@ router.get('/:courseId', auth, courseController.getCourseById);
  * @desc      Register for a course
  * @access    Private
  */
-router.post('/:courses/register', auth, courseController.registerForCourse);
+router.post('/courses/register', auth, courseController.registerForCourse);
 
 /** @route    POST api/v1/courses/ 
  * @desc      Create a new course
