@@ -7,6 +7,8 @@ const authRoutes = require("./routes/auth.route");
 const workshopRoutes = require("./routes/workshop.route");
 const courseRoutes = require("./routes/course.route");
 const { connectDB } = require("./config/db");
+const swaggerDocs = require("./config/swagger");
+const swaggerUi = require('swagger-ui-express');
 
 dotenv.config();
 connectDB();
@@ -14,6 +16,7 @@ connectDB();
 app.use(cors());
 app.use(express.json());
 app.use(morgan('dev'));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 app.get('/', (req, res) => {
   res.send("Server is healthy!")
