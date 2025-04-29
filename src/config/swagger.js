@@ -41,98 +41,6 @@ const options = {
           bearerFormat: "JWT",
         },
       },
-      schemas: {
-        User: {
-          type: "object",
-          properties: {
-            _id: {
-              type: "string",
-            },
-            firstName: {
-              type: "string",
-            },
-            lastName: {
-              type: "string",             
-            },
-            email: {
-              type: "string",
-            },
-            password: {
-              type: "string",
-            },
-            role: {
-              type: "string",
-              enum: ["admin", "user"],
-            },
-          },
-        },
-        Course: {
-          type: "object",
-          properties: {
-            _id: { type: "string" },
-            title: { type: "string" },
-            description: { type: "string" },
-          },
-        },
-        Workshop:{
-          type:"object",
-          properties:{
-            _id:{type:"string"},
-            title:{type:"string"},
-            description:{type:"string"},
-            date:{type:"string"},
-            duration:{type:"string"},
-            facilitator:{
-              type:"object",
-              properties:{
-                name:{type:"string"},
-                email:{type:"string"}
-              }
-            },
-            resource:{
-              type:"array",
-              items:{
-                type:"string"
-              }
-            },
-            location:{
-              type:"string"
-            },
-            attendees:{
-              type:"array",
-              items:{
-                type:"string",
-                properties:{
-                  _id:{type:"string"}
-                }
-              }
-            }
-          }
-        },
-        CourseRegistration: {
-          type: "object",
-          properties: {
-            _id: { type: "string" },
-            course: {
-              type: "object",
-              properties: {
-                _id: { type: "string" },
-                title: { type: "string" },
-                description: { type: "string" },
-              },
-            },
-            enrolledUser: {
-              type: "object",
-              properties: {
-                _id: { type: "string" },
-                firstName: { type: "string" },
-                lastName: { type: "string" },
-                email: { type: "string" },
-              },
-            },
-          },
-        },
-      },
     },
     tags: [
       {
@@ -146,14 +54,6 @@ const options = {
       {
         name: "Workshops",
         description: "Workshop management",
-      },
-      {
-        name: "Course Registrations",
-        description: "Course registration management",
-      },
-      {
-        name: "Workshop Registrations",
-        description: "Workshop registration management",
       },
       {
         name: "Auth",
