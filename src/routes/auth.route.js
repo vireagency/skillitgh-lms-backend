@@ -166,7 +166,7 @@ router.post('/auth/register', authController.register);
  *                   type: string
  *                   example: Invalid credentials
  *       500:
- *         description: Internal server error
+ *         description: Internal Server Error
  *         content:
  *           application/json:
  *             schema:
@@ -179,7 +179,7 @@ router.post('/auth/register', authController.register);
  *                   type: string
  *                   example: Internal Server Error
 */
-/** @route   POST /api/v1/auth/sign in 
+/** @route   POST /api/v1/auth/signin 
  * @desc     Sign in a user
  * @access   Public
 */
