@@ -53,7 +53,7 @@ const authController = require("../controllers/auth.controller");
  *                 message:
  *                   type: string
  *                   example: User registered successfully
- *                 user:
+ *                 data:
  *                   type: object
  *                   properties:
  *                     id:
@@ -143,7 +143,7 @@ router.post('/auth/register', authController.register);
  *                 accessToken:
  *                   type: string
  *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
- *                 user:
+ *                 data:
  *                   type: object
  *                   properties:
  *                     id:
@@ -185,4 +185,4 @@ router.post('/auth/register', authController.register);
 */
 router.post('/auth/signin', authController.signIn);
 
-module.exports = router;
+module.exports = router; 
