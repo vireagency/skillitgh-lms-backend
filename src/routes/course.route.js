@@ -19,19 +19,11 @@ router.get('/:courseId', auth, courseController.getCourseById);
 
 /**
  * @swagger
- * /api/v1/courses/{courseId}/register/:
+ * /api/v1/courses/register/:
  *   post:
  *     summary: Register a course
  *     description: This endpoint allows a user to register a course by selecting the course and optionally typing a reason.
  *     tags: ["Courses"]
- *     parameters:
- *       - name: courseId
- *         in: path
- *         required: true
- *         description: The ID of the course to register for.
- *         schema:
- *           type: string
- *           example: "1234567890abcdef12345678"
  *     requestBody:
  *       required: true
  *       content:
@@ -90,7 +82,7 @@ router.get('/:courseId', auth, courseController.getCourseById);
  */
 
 /** 
- * @route    POST api/v1/courses/:courseId/register/ 
+ * @route    POST api/v1/courses/register/ 
  * @desc      Register for a course
  * @access    Private
  */
