@@ -33,7 +33,7 @@ exports.getCourseById = async (req, res) => {
 // @desc     Register for a course
 exports.registerForCourse = async (req, res) => {
   try {
-    const { courseId, text } = req.body;
+    const { courseId, messageBody } = req.body;
     const userId = req.user._id;
     if (!userId) {
       return res.status(401).json({ success: false, message: "Unauthorized: Please Login."})
@@ -53,7 +53,7 @@ exports.registerForCourse = async (req, res) => {
     const registration = await CourseRegistration.create({
       course: courseId,
       enrolledUser: userId,
-      text
+      messageBody
     });
 
     res.status(200).json({ success: true, message: "You have successfully enrolled in this course", data: registration })
