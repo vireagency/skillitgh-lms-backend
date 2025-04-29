@@ -4,7 +4,7 @@ const authController = require("../controllers/auth.controller");
 
 /**
  * @swagger
- * /api/auth/register:
+ * /api/v1/auth/register:
  *   post:
  *     summary: Register a new user
  *     description: This endpoint allows a new user to register by providing their first name, last name, email and password.
@@ -20,7 +20,6 @@ const authController = require("../controllers/auth.controller");
  *               - lastName
  *               - email
  *               - password
- *               - role
  *             properties:
  *               firstName:
  *                 type: string
@@ -106,7 +105,7 @@ router.post('/auth/register', authController.register);
 
 /**
  * @swagger
- * /api/auth/login:
+ * /api/v1/auth/signin:
  *   post:
  *     summary: Login a user
  *     description: This endpoint allows a user to login by providing their email and password.
