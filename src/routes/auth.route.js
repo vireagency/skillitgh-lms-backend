@@ -29,7 +29,7 @@ const authController = require("../controllers/auth.controller");
  *                 example: Mensah
  *               email:
  *                 type: string
- *                 example: mensk6@gmil.com
+ *                 example: mensk6@gmail.com
  *               password:
  *                 type: string
  *                 example: Kweku1234
