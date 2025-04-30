@@ -24,11 +24,15 @@ const userSchema = new mongoose.Schema({
     trim: true,
     select: false
   },
+  userImage: {
+    type: String,
+    trim: true
+  },
   role: {
     type: String,
     enum: ['admin', 'user'],
     default: 'user'
-  }
+  },
 }, { timestamps: true })
 
 module.exports = mongoose.model('User', userSchema);      
