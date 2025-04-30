@@ -41,6 +41,10 @@ exports.registerForCourse = async (req, res) => {
     if (!courseId) {
       return res.status(400).json({ success: false, message: "Course ID is required!" });
     }
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found!" });
+    }
     const course = await Course.findById(courseId);
     if (!course) {
       return res.status(404).json({ success: false, message: "Course not found!" });
@@ -55,6 +59,8 @@ exports.registerForCourse = async (req, res) => {
       enrolledUser: userId,
       messageBody
     });
+    user.courses.push(courseId);
+    await user.save();
 
     res.status(200).json({ success: true, message: "You have successfully enrolled in this course", data: registration })
   } catch (error) {
