@@ -121,6 +121,9 @@ exports.registerForWorkshop = async (req, res) => {
     workshop.attendees.push(id);
     await workshop.save();
 
+    user.workshops.push(workshopId);
+    await user.save();
+
     res.status(200).json({ success: true, message: "Successfully registered for the workshop!", data: workshop });
 
   } catch (error) {
