@@ -26,7 +26,8 @@ const userSchema = new mongoose.Schema({
   },
   userImage: {
     type: String,
-    trim: true
+    trim: true,
+    default: "https://upload.wikimedia.org/wikipedia/commons/5/59/User-avatar.svg"
   },
   role: {
     type: String,
