@@ -13,11 +13,11 @@ exports.auth = async (req, res, next) => {
     // Attach user info to the request
     req.user = await User.findById(decoded.id);
     if (!req.user) {
-      return res.status(401).json({ success: false, message: "Invalid token. Access denied." });
+      return res.status(401).json({ success: false, message: "Invalid or expired token. Access denied." });
     }
     next();
   } catch (err) {
     console.error("Invalid or expired token", err.message);
-    res.status(500).json({ message: "Internal Server Error", success: false });
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
