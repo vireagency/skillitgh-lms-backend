@@ -24,11 +24,23 @@ const userSchema = new mongoose.Schema({
     trim: true,
     select: false
   },
+  userImage: {
+    type: String,
+    trim: true
+  },
   role: {
     type: String,
     enum: ['admin', 'user'],
     default: 'user'
-  }
+  },
+  courses: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Course'
+  }],
+  workshops: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Workshop'
+  }],
 }, { timestamps: true })
 
 module.exports = mongoose.model('User', userSchema);      

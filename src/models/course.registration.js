@@ -11,7 +11,7 @@ const courseRegistrationSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
-  text: {
+  messageBody: {
     type: String,
   }
 }, { timestamps: true });

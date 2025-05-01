@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 // @desc    Register a new user
 exports.register = async (req, res) => {
   try {
-    const { firstName, lastName, email, password } = req.body;
+    const { firstName, lastName, email, password, role } = req.body;
     // validation
     if (!firstName || !lastName || !email || !password) {
       return res.status(400).json({ success: false, message: "All fields are required!" });
@@ -23,23 +23,19 @@ exports.register = async (req, res) => {
       firstName,
       lastName,
       email,
-      password: hashedPassword
+      password: hashedPassword,
+      role
     })
     // check if user is created successfully
     if (!newUser) {
       return res.status(400).json({ success: false, message: "User not created!" });
     }
     
-    // generate token
-    const generatedToken = (userId) => {
-      return jwt.sign({ id: userId }, process.env.PRIVATE_KEY, { expiresIn: "1d" });
-    }
-
     // save new user to db
     const savedUser = await newUser.save();
     const userWithoutPassword = savedUser.toObject();
     delete userWithoutPassword.password; // remove password from user object
-    res.status(201).json({ success: true, message: "User registered successfully!", user: userWithoutPassword, generatedToken: generatedToken(savedUser._id) });
+    res.status(201).json({ success: true, message: "User registered successfully!", data: userWithoutPassword });
   } catch (err) {
     console.error("Error in registering user: ", err);
     res.status(500).json({ success: false, message: "Internal Server Error" });
@@ -73,7 +69,7 @@ exports.signIn = async (req, res) => {
     // const userObject = existingUser.toObject();
     // delete userObject.password;
 
-    res.status(200).json({ success: true, message: "User signed in successfully!", user: user, accessToken });
+    res.status(200).json({ success: true, message: "User signed in successfully!", data: user, accessToken });
   } catch (err) {
     console.log("Error in signing in user: ", err);
     res.status(500).json({ success: false, message: "Internal Server Error" });

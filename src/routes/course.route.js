@@ -17,19 +17,86 @@ router.get('/courses', auth, courseController.getCourses);
  */
 router.get('/:courseId', auth, courseController.getCourseById);
 
-/** @route    POST api/v1/courses/:courseId/register/ 
+/**
+ * @swagger
+ * /api/v1/courses/register/:
+ *   post:
+ *     summary: Register a course
+ *     description: This endpoint allows a user to register a course by selecting the course and optionally typing a reason.
+ *     tags: ["Courses"]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               courseId:
+ *                 type: string
+ *                 description: The ID of the course to register for.
+ *                 example: "1234567890abcdef12345678"
+ *               reason:
+ *                 type: string
+ *                 description: The reason for registering for the course.
+ *                 example: "I want to learn more about this topic."
+ *     responses:
+ *       200:
+ *         description: Successfully registered for the course.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Successfully registered for the course."
+ *                 success: 
+ *                   type: boolean
+ *                   example: true
+ *       400:
+ *          description: Course Id is required or You have already registered for this course.
+ *          content: 
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  message:
+ *                    type: string
+ *                    example: "Course Id is required or You have already registered for this course."
+ *                  success:
+ *                    type: boolean
+ *                    example: true              
+ *       500:
+ *         description: Internal Server Error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Internal Server Error"
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ */
+
+/** 
+ * @route    POST api/v1/courses/register/ 
  * @desc      Register for a course
  * @access    Private
  */
-router.post('/:courses/register', auth, courseController.registerForCourse);
+router.post('/courses/register', auth, courseController.registerForCourse);
 
-/** @route    POST api/v1/courses/ 
+/** 
+ * @route    POST api/v1/courses/ 
  * @desc      Create a new course
  * @access    Private (admin only)
  */
 router.post('/courses', auth, authorizeRole('admin'), courseController.createCourse);
 
-/** @route    GET api/v1/dashboard/registeredCourses
+/** 
+ * @route    GET api/v1/dashboard/registeredCourses
  * @desc      GET all registered courses for a user
  * @access    Private
  */

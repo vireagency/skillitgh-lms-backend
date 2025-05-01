@@ -8,6 +8,10 @@ workshopSchema = new mongoose.Schema({
   },
   description: {
     type: String,
+    trim: true
+  },
+  workshopImage: {
+    type: String,
     required: true,
     trim: true
   },

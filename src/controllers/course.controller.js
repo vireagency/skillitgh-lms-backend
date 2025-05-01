@@ -26,18 +26,24 @@ exports.getCourseById = async (req, res) => {
   } catch (error) {
     console.error("Error in fetching this course by Id:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
+
+  }
 }
  
 // @desc     Register for a course
 exports.registerForCourse = async (req, res) => {
   try {
-    const { courseId, text } = req.body;
+    const { courseId, messageBody } = req.body;
     const userId = req.user._id;
     if (!userId) {
       return res.status(401).json({ success: false, message: "Unauthorized: Please Login."})
     }
     if (!courseId) {
       return res.status(400).json({ success: false, message: "Course ID is required!" });
+    }
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found!" });
     }
     const course = await Course.findById(courseId);
     if (!course) {
@@ -51,8 +57,10 @@ exports.registerForCourse = async (req, res) => {
     const registration = await CourseRegistration.create({
       course: courseId,
       enrolledUser: userId,
-      text
+      messageBody
     });
+    user.courses.push(courseId);
+    await user.save();
 
     res.status(200).json({ success: true, message: "You have successfully enrolled in this course", data: registration })
   } catch (error) {
@@ -102,7 +110,7 @@ exports.getRegisteredUsers = async (req, res) => {
       return res.status(404).json({ success: false, message: "No users found for this course!" });
     }
     const registrationIds = registrations.map(reg => reg.enrolledUser);
-    
+
     const users = await User.find({ _id: { $in: registrationIds }}).sort('createdAt:-1');
 
     if (!users || users.length === 0) {
