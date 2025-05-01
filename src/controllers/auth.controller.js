@@ -69,7 +69,7 @@ exports.signIn = async (req, res) => {
     // const userObject = existingUser.toObject();
     // delete userObject.password;
 
-    res.status(200).json({ success: true, message: "User signed in successfully!", data: user, accessToken });
+    res.status(200).json({ success: true, message: "User signed in successfully!", data: user, token: accessToken });
   } catch (err) {
     console.log("Error in signing in user: ", err);
     res.status(500).json({ success: false, message: "Internal Server Error" });
