@@ -118,7 +118,7 @@ exports.registerForWorkshop = async (req, res) => {
       return res.status(400).json({ success: false, message: "You are already registered for this workshop!" });
     }
 
-    workshop.attendees.push(id);
+    workshop.attendees.push(id); // Alternatively, you can use workshop.attendees.addToSet(id) to avoid duplicates
     await workshop.save();
 
     user.workshops.push(workshopId);
