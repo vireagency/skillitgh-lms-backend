@@ -48,7 +48,7 @@ exports.getWorkshopById = async (req, res) => {
 
 exports.createWorkshop = async (req, res) => {
   try {
-    const { title, description, date, duration, facilitator, location, resource } = req.body;
+    const { title, description, date, duration, facilitator, location, resource, image } = req.body;
     if (!title || !description || !date || !duration || !facilitator || !location) {
       return res.status(400).json({ success: false, message: "All fields are required!" });
     }
@@ -61,7 +61,7 @@ exports.createWorkshop = async (req, res) => {
     if (workshopDate < today) {
       return res.status(400).json({ success: false, message: "Workshop date must be in the future!" });
     }
-    const newWorkshop = new Workshop({ title, description, date, duration, facilitator, location, resource });
+    const newWorkshop = new Workshop({ title, description, date, duration, facilitator, location, resource, image });
 
     if (req.files && req.files.length > 0) {
       newWorkshop.resource = req.files.map(file => file.path);
