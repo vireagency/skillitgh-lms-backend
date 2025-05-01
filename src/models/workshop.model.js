@@ -12,7 +12,6 @@ workshopSchema = new mongoose.Schema({
   },
   workshopImage: {
     type: String,
-    required: true,
     trim: true
   },
   date: {
