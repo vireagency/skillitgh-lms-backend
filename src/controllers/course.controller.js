@@ -168,3 +168,31 @@ exports.getOtherCourses = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 }
+
+exports.registerForOtherCourses = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { courseId } = req.params;
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "Unauthorized: Please Login" });
+    }
+    const existingCourse = Course.findById(courseId);
+    if (!existingCourse) {
+      return res.status(404).json({ success: false, message: "Course not found!" });
+    }
+    const alreadyRegistered = CourseRegistration.find({ enrolledUser: userId, course: courseId });
+    if (alreadyRegistered) {
+      return res.status(400).json({ success: false, message: "You have already registered for this course." });
+    }
+    const otherCourse = CourseRegistration.create({
+      enrolledUser: userId,
+      course: courseId
+    })
+    
+    res.status(201).json({ success: true, message: "This course is successfully registered", data: otherCourse });
+
+  } catch (error) {
+    console.error("Error registering for another course:", error.message);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+}
