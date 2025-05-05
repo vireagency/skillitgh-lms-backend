@@ -102,17 +102,26 @@ router.post('/courses', auth, authorizeRole('admin'), courseController.createCou
  */
 router.get('/dashboard/registeredCourses', auth, courseController.getRegisteredCourses);
 
-/** @route    GET api/v1/dashboard/registeredUsers
+/** 
+ * @route    GET api/v1/dashboard/registeredUsers
  * @desc      GET all registered users for a course
  * @access    Private (admin only)
  */
 router.get('/dashboard/:courseId/registeredUsers', auth, authorizeRole('admin'), courseController.getRegisteredUsers);
 
 
-/** @route    GET api/v1/dashboard/otherCourses
+/** 
+ * @route    GET api/v1/dashboard/otherCourses
  * @desc      GET all other courses
  * @access    Private 
  */
 router.get('/dashboard/otherCourses', auth, courseController.getOtherCourses);
+
+/** 
+ * @route   GET api/v1/dashboard/{courseId}/registier 
+ * @desc     Register for other courses
+ * @access   Private
+ */
+router.post('/dashboard/:courseId/register', auth, courseController.registerForOtherCourses);
 
 module.exports = router;
