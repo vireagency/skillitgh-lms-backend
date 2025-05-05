@@ -94,7 +94,7 @@ exports.deleteWorkshop = async (req, res) => {
 exports.registerForWorkshop = async (req, res) => {
   try {
     const { workshopId } = req.params;
-    const { id } = req.user;
+    const { userId } = req.user;
 
     // const workshop = await Workshop.findById(workshopId);
     // if (!workshop) {
@@ -110,15 +110,15 @@ exports.registerForWorkshop = async (req, res) => {
     if (!workshop) {
       return res.status(404).json({ success: false, message: "Workshop not found! Make sure you chose an upcoming workshop" });
     }
-    const user = await User.findById(id);
+    const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found!" });
     }
-    if (workshop.attendees.includes(id)) {
+    if (workshop.attendees.includes(userId)) {
       return res.status(400).json({ success: false, message: "You are already registered for this workshop!" });
     }
 
-    workshop.attendees.push(id); // Alternatively, you can use workshop.attendees.addToSet(id) to avoid duplicates
+    workshop.attendees.push(userId); // Alternatively, you can use workshop.attendees.addToSet(id) to avoid duplicates
     await workshop.save();
 
     user.workshops.push(workshopId);
