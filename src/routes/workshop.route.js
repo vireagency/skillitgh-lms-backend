@@ -33,6 +33,9 @@ const {
  *               description:
  *                 type: string
  *                 example: "Learn how to manage your time effectively."
+ *               workshopImage:
+ *                 type: string
+ *                 example: "https://example.com/image.jpg"
  *               facilitator:
  *                 type: object
  *                 properties:
@@ -67,6 +70,9 @@ const {
  *                 success:
  *                   type: boolean
  *                   example: true
+ *                 status: 
+ *                   type: string
+ *                   example: "Upcoming"
  *                 message:
  *                   type: string   
  *                   example: "Upcoming workshops retrieved successfully."
@@ -84,6 +90,9 @@ const {
  *                      description:
  *                        type: string
  *                        example: "Learn how to manage your time effectively."
+ *                      workshopImage:
+ *                        type: string
+ *                        example: "https://example.com/image.jpg"
  *                      facilitator:
  *                        type: object
  *                        properties:
@@ -119,13 +128,13 @@ const {
  * @access     Public
  */
 
-router.get('/workshops/upcoming', auth, getUpcomingWorkshops);
+router.get('/workshops/upcoming', getUpcomingWorkshops);
 
 /** @route     GET api/workshops/previous
  * @desc       Get all previous workshops
  * @access     Public
  */
-router.get('/workshops/previous', auth, getPreviousWorkshops);
+router.get('/workshops/previous', getPreviousWorkshops);
 
 /** @route     GET api/workshops/:workshopId
  * @desc       Get workshop by ID
