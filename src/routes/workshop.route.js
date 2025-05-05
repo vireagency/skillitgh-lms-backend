@@ -119,25 +119,25 @@ const {
  * @access     Public
  */
 
-router.get('/workshops/upcoming', getUpcomingWorkshops);
+router.get('/workshops/upcoming', auth, getUpcomingWorkshops);
 
 /** @route     GET api/workshops/previous
  * @desc       Get all previous workshops
  * @access     Public
  */
-router.get('/workshops/previous', getPreviousWorkshops);
+router.get('/workshops/previous', auth, getPreviousWorkshops);
 
 /** @route     GET api/workshops/:workshopId
  * @desc       Get workshop by ID
  * @access     Public
  */
-router.get('/workshops/:workshopId', getWorkshopById);
+router.get('/workshops/:workshopId', auth, getWorkshopById);
 
 /** @route     POST api/workshops/register
  * @desc       Register for a workshop
  * @access     Private
  */
-router.post('/workshops/:workshopId/register',auth, registerForWorkshop);
+router.post('/workshops/:workshopId/register', auth, registerForWorkshop);
 
 /** @route     POST api/workshops/
  * @desc       Create a new workshop
