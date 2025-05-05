@@ -8,7 +8,7 @@ exports.getUpcomingWorkshops = async (req, res) => {
     if (!upcomingWorkshops || upcomingWorkshops.length === 0) {
       return res.status(404).json({ success: false, message: "No upcoming workshops found!" });
     }
-    res.status(200).json({ success: true, message: "These are the upcoming workshops for you.", data: upcomingWorkshops });
+    res.status(200).json({ success: true, status: "Upcoming", message: "These are the upcoming workshops for you.", data: upcomingWorkshops });
   } catch (error) {
     console.error("Error fetching upcoming workshops: ", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
@@ -22,7 +22,7 @@ exports.getPreviousWorkshops = async (req, res) => {
     if (!previousWorkshops || previousWorkshops.length === 0) {
       return res.status(404).json({ success: false, message: "No previous workshops found!" });
     }
-    res.status(200).json({ success: true, message: "These are the previous workshops for you.", data: previousWorkshops });
+    res.status(200).json({ success: true, status: "Previous", message: "These are the previous workshops for you.", data: previousWorkshops });
   } catch (error) {
     console.error("Error fetching previous workshops:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
