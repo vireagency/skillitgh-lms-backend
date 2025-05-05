@@ -13,7 +13,8 @@ const courseSchema = new mongoose.Schema({
   },
   courseImage: {
     type: String,
-    trim: true
+    trim: true,
+    default: "https://thaka.bing.com/th/id/OIP.sTchjTmtqEuL0q8yjtNkDQHaGE?rs=1&pid=ImgDetMain"
   }
 }, { timestamps: true });
 

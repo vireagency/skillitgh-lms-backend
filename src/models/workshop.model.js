@@ -12,8 +12,8 @@ workshopSchema = new mongoose.Schema({
   },
   workshopImage: {
     type: String,
-    required: true,
-    trim: true
+    trim: true,
+    default: "https://asset.cloudinary.com/dc7waspih/5298eb1df4079707814dcf1b435a0af7"
   },
   date: {
     type: Date,

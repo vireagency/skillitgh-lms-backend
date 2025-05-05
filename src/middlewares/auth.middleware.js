@@ -24,6 +24,6 @@ exports.auth = async (req, res, next) => {
     next();
   } catch (err) {
     console.error("Invalid or expired token", err.message);
-    res.status(500).json({ message: "Internal Server Error", success: false });
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
