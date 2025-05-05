@@ -8,7 +8,7 @@ exports.getCourses = async (req, res) => {
     if (!courses) {
       return res.status(404).json({ success: false, message: "Courses not found" });
     }
-    res.status(200).json({ success: true, message: "Courses found!", courses });
+    res.status(200).json({ success: true, message: "Successfully fetched all courses", data: courses });
   } catch (error) {
     console.error("Error in getting all courses", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
@@ -22,7 +22,7 @@ exports.getCourseById = async (req, res) => {
     if (!course) {
       return res.status(404).json({ message: "Course not found" });
     }
-    res.status(200).json({ success: true, message: "Successfully fetched course by Id", course });
+    res.status(200).json({ success: true, message: "Successfully fetched course by Id", data: course });
   } catch (error) {
     console.error("Error in fetching this course by Id:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
@@ -34,7 +34,7 @@ exports.getCourseById = async (req, res) => {
 exports.registerForCourse = async (req, res) => {
   try {
     const { courseTitle, messageBody } = req.body;
-    const userId = req.user._id;
+    const { userId } = req.user;
     if (!userId) {
       return res.status(401).json({ success: false, message: "Unauthorized: Please Login."})
     }
@@ -75,7 +75,7 @@ exports.registerForCourse = async (req, res) => {
 // @desc     Get all registered courses for a user
 exports.getRegisteredCourses = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const { userId } = req.user;
     if (!userId) {
       return res.status(401).json({ success: false, message: "Unauthorized: Please Login."})
     }
@@ -152,7 +152,7 @@ exports.createCourse = async (req, res) => {
 // @desc      GET other courses
 exports.getOtherCourses = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const { userId } = req.user;
     if (!userId) {
       return res.status(401).json({ success: false, message: "Unauthorized: Please Login."})
     }
@@ -175,23 +175,32 @@ exports.getOtherCourses = async (req, res) => {
 
 exports.registerForOtherCourses = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const { userId } = req.user;
     const { courseId } = req.params;
     if (!userId) {
       return res.status(401).json({ success: false, message: "Unauthorized: Please Login" });
     }
-    const existingCourse = Course.findById(courseId);
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found!" });
+    }
+    const existingCourse = await Course.findById(courseId);
     if (!existingCourse) {
       return res.status(404).json({ success: false, message: "Course not found!" });
     }
-    const alreadyRegistered = CourseRegistration.find({ enrolledUser: userId, course: courseId });
+    const alreadyRegistered = await CourseRegistration.findOne({ enrolledUser: userId, course: courseId });
     if (alreadyRegistered) {
       return res.status(400).json({ success: false, message: "You have already registered for this course." });
     }
-    const otherCourse = CourseRegistration.create({
+    const otherCourse = await CourseRegistration.create({
       enrolledUser: userId,
       course: courseId
     })
+    if (!otherCourse) {
+      return res.status(400).json({ success: false, message: "Course registration failed!" });
+    }
+    user.courses.push(courseId);
+    await user.save();
     
     res.status(201).json({ success: true, message: "This course is successfully registered", data: otherCourse });
 
