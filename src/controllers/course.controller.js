@@ -8,7 +8,7 @@ exports.getCourses = async (req, res) => {
     if (!courses) {
       return res.status(404).json({ success: false, message: "Courses not found" });
     }
-    res.status(200).json({ success: true, message: "Successfully fetched all courses", data: courses });
+    res.status(200).json({ success: true, message: "Successfully fetched all courses", courses: courses });
   } catch (error) {
     console.error("Error in getting all courses", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
@@ -22,7 +22,7 @@ exports.getCourseById = async (req, res) => {
     if (!course) {
       return res.status(404).json({ message: "Course not found" });
     }
-    res.status(200).json({ success: true, message: "Successfully fetched course by Id", data: course });
+    res.status(200).json({ success: true, message: "Successfully fetched course by Id", course: course });
   } catch (error) {
     console.error("Error in fetching this course by Id:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
@@ -65,7 +65,7 @@ exports.registerForCourse = async (req, res) => {
     user.courses.push(course._id);
     await user.save();
 
-    res.status(200).json({ success: true, message: "You have successfully enrolled in this course", data: registration })
+    res.status(200).json({ success: true, message: "You have successfully enrolled in this course", registration: registration })
   } catch (error) {
     console.error("Error in registering course:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
@@ -90,7 +90,7 @@ exports.getRegisteredCourses = async (req, res) => {
       return res.status(404).json({ success: false, message: "No registered courses found!" });
     }
 
-    res.status(200).json({ success: true, message: "Successfully fetched all registered courses", data: courses });
+    res.status(200).json({ success: true, message: "Successfully fetched all registered courses", courses: courses });
   } catch (error) {
     console.error("Error in fetching registered courses:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
@@ -119,7 +119,7 @@ exports.getRegisteredUsers = async (req, res) => {
     if (!users || users.length === 0) {
       return res.status(404).json({ success: false, message: "No registered users found!" });
     }
-    res.status(200).json({ success: true, message: "Successfully fetched all registered users", data: users });
+    res.status(200).json({ success: true, message: "Successfully fetched all registered users", users: users });
   } catch (error) {
     console.error("Error in fetching registered users:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
@@ -142,7 +142,7 @@ exports.createCourse = async (req, res) => {
       description,
       image
     });
-    res.status(201).json({ success: true, message: "Course created successfully", data: course });
+    res.status(201).json({ success: true, message: "Course created successfully", course: course });
   } catch (error) {
     console.error("Error in creating course:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
@@ -166,7 +166,7 @@ exports.getOtherCourses = async (req, res) => {
     if (!courses || courses.length === 0) {
       return res.status(404).json({ success: false, message: "No other courses found!" });
     }
-    res.status(200).json({ success: true, message: "Successfully fetched other courses", data: courses });
+    res.status(200).json({ success: true, message: "Successfully fetched other courses", courses: courses });
   } catch (error) {
     console.error("Error in fetching other courses:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
@@ -202,7 +202,7 @@ exports.registerForOtherCourses = async (req, res) => {
     user.courses.push(courseId);
     await user.save();
     
-    res.status(201).json({ success: true, message: "This course is successfully registered", data: otherCourse });
+    res.status(201).json({ success: true, message: "This course is successfully registered", registration: otherCourse });
 
   } catch (error) {
     console.error("Error registering for another course:", error.message);

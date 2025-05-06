@@ -8,7 +8,7 @@ exports.getUpcomingWorkshops = async (req, res) => {
     if (!upcomingWorkshops || upcomingWorkshops.length === 0) {
       return res.status(404).json({ success: false, message: "No upcoming workshops found!" });
     }
-    res.status(200).json({ success: true, status: "Upcoming", message: "These are the upcoming workshops for you.", data: upcomingWorkshops });
+    res.status(200).json({ success: true, status: "Upcoming", message: "These are the upcoming workshops for you.", workshops: upcomingWorkshops });
   } catch (error) {
     console.error("Error fetching upcoming workshops: ", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
@@ -22,7 +22,7 @@ exports.getPreviousWorkshops = async (req, res) => {
     if (!previousWorkshops || previousWorkshops.length === 0) {
       return res.status(404).json({ success: false, message: "No previous workshops found!" });
     }
-    res.status(200).json({ success: true, status: "Previous", message: "These are the previous workshops for you.", data: previousWorkshops });
+    res.status(200).json({ success: true, status: "Previous", message: "These are the previous workshops for you.", workshops: previousWorkshops });
   } catch (error) {
     console.error("Error fetching previous workshops:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
@@ -39,7 +39,7 @@ exports.getWorkshopById = async (req, res) => {
     if (!workshop) {
       return res.status(404).json({ success: false, message: "Workshop not found!" });
     }
-    res.status(200).json({ success: true, message: "Workshop details fetched successfully.", data: workshop });
+    res.status(200).json({ success: true, message: "Workshop details fetched successfully.", workshop: workshop });
   } catch (error) {
     console.error("Error fetching workshop by ID:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
@@ -67,7 +67,7 @@ exports.createWorkshop = async (req, res) => {
       newWorkshop.resource = req.files.map(file => file.path);
     }
     await newWorkshop.save();
-    res.status(201).json({ success: true, message: "Workshop created successfully.", data: newWorkshop });
+    res.status(201).json({ success: true, message: "Workshop created successfully.", workshop: newWorkshop });
   } catch (error) {
     console.error("Error creating workshop:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
@@ -124,7 +124,7 @@ exports.registerForWorkshop = async (req, res) => {
     user.workshops.push(workshopId);
     await user.save();
 
-    res.status(200).json({ success: true, message: "Successfully registered for the workshop!", data: workshop });
+    res.status(200).json({ success: true, message: "Successfully registered for the workshop!", registration: workshop });
 
   } catch (error) {
     console.error("Error registering for workshop!", error);
