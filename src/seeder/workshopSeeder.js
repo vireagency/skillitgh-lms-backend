@@ -207,7 +207,7 @@ const seedWorkshops = async () => {
       {
         title: 'Introduction to Augmented Reality',
         description: 'Understanding augmented reality and its applications.',
-        date: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 70), // 7 days from now
+        date: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 70), // 7 days from now
         duration: '3 hours',
         facilitator: {
           name: 'Prof. Akpati Iddris',
@@ -219,7 +219,7 @@ const seedWorkshops = async () => {
       {
         title: 'Introduction to Virtual Reality',
         description: 'Understanding virtual reality and its applications.',
-        date: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 75), // 7 days from now
+        date: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 75), // 7 days from now
         duration: '3 hours',
         facilitator: {
           name: 'Prof. Akpati Iddris',
@@ -231,7 +231,7 @@ const seedWorkshops = async () => {
       {
         title: 'Introduction to Internet of Things (IoT)',
         description: 'Understanding IoT and its applications.',
-        date: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 80), // 7 days from now
+        date: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 80), // 7 days from now
         duration: '3 hours',
         facilitator: {
           name: 'Prof. Akpati Iddris',
@@ -243,7 +243,7 @@ const seedWorkshops = async () => {
       {
         title: 'Introduction to Robotics',
         description: 'Understanding robotics and automation.',
-        date: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 85), // 7 days from now
+        date: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 85), // 7 days from now
         duration: '3 hours',
         facilitator: {
           name: 'Prof. Akpati Iddris',
@@ -255,7 +255,7 @@ const seedWorkshops = async () => {
       {
         title: 'Introduction to 3D Printing',
         description: 'Understanding 3D printing and its applications.',
-        date: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 90), // 7 days from now
+        date: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 90), // 7 days from now
         duration: '3 hours',
         facilitator: {
           name: 'Prof. Akpati Iddris',
@@ -267,7 +267,7 @@ const seedWorkshops = async () => {
       {
         title: 'Introduction to Game Development',
         description: 'Understanding game development and design principles.',
-        date: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 95), // 7 days from now
+        date: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 95), // 7 days from now
         duration: '3 hours',
         facilitator: {
           name: 'Prof. Akpati Iddris',
@@ -279,7 +279,7 @@ const seedWorkshops = async () => {
       {
         title: 'Introduction to Natural Language Processing',
         description: 'Understanding NLP and its applications.',
-        date: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 100), // 7 days from now
+        date: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 100), // 7 days from now
         duration: '3 hours',
         facilitator: {
           name: 'Prof. Akpati Iddris',
@@ -291,7 +291,7 @@ const seedWorkshops = async () => {
       {
         title: 'Introduction to Computer Vision',
         description: 'Understanding computer vision and image processing.',
-        date: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 105), // 7 days from now
+        date: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 105), // 7 days from now
         duration: '3 hours',
         facilitator: {
           name: 'Prof. Akpati Iddris',
@@ -303,7 +303,7 @@ const seedWorkshops = async () => {
       {
         title: 'Introduction to Data Mining',
         description: 'Understanding data mining techniques and tools.',
-        date: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 110), // 7 days from now
+        date: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 110), // 7 days from now
         duration: '3 hours',
         facilitator: {
           name: 'Prof. Akpati Iddris',
@@ -315,7 +315,7 @@ const seedWorkshops = async () => {
       {
         title: 'Introduction to Data Warehousing',
         description: 'Understanding data warehousing concepts and tools.',
-        date: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 115), // 7 days from now
+        date: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 115), // 7 days from now
         duration: '3 hours',
         facilitator: {
           name: 'Prof. Akpati Iddris',
@@ -327,7 +327,7 @@ const seedWorkshops = async () => {
       {
         title: 'Introduction to Big Data',
         description: 'Understanding big data technologies and tools.',
-        date: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 120), // 7 days from now
+        date: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 120), // 7 days from now
         duration: '3 hours',
         facilitator: {
           name: 'Prof. Akpati Iddris',
@@ -339,7 +339,7 @@ const seedWorkshops = async () => {
       {
         title: 'Introduction to Data Governance',
         description: 'Understanding data governance and management.',
-        date: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 125), // 7 days from now
+        date: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 125), // 7 days from now
         duration: '3 hours',
         facilitator: {
           name: 'Prof. Akpati Iddris',
@@ -351,7 +351,7 @@ const seedWorkshops = async () => {
       {
         title: 'Introduction to Data Ethics',
         description: 'Understanding data ethics and privacy.',
-        date: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 130), // 7 days from now
+        date: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 130), // 7 days from now
         duration: '3 hours',
         facilitator: {
           name: 'Prof. Akpati Iddris',
