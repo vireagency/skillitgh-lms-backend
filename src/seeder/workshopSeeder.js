@@ -1,5 +1,3 @@
-const mongoose = require('mongoose');
-const dotenv = require('dotenv');
 const Workshop = require('../models/workshop.model');
 const { connectDB } = require('../config/db');
 

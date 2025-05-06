@@ -13,20 +13,20 @@ const seedCourses = async () => {
 
     const Courses = [
       {
-        title: 'Introduction to Programming',
-        description: 'Learn the basics of programming using Python.',
+        title: 'Graphic Design',
+        description: 'Learn the fundamentals of graphic design and typography.',
       },
       {
         title: 'Web Development',
-        description: 'Build modern web applications using HTML, CSS, and JavaScript.',
+        description: 'Build responsive websites using HTML, CSS, and JavaScript.',
       },
       {
-        title: 'Data Science',
-        description: 'Analyze and visualize data using Python and R.',
+        title: 'Microsoft Office',
+        description: 'Master Excel, Word, and PowerPoint for productivity.',
       },
       {
         title: 'UI/UX Design',
-        description: 'Figma, design systems, and product thinking.',
+        description: 'Understand user experience and interface design principles.',
       },
     ];
     
