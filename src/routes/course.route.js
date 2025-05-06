@@ -113,7 +113,7 @@ router.post('/courses', auth, authorizeRole('admin'), courseController.createCou
 
 /** 
  * @swagger
- * /api/v1/courses/dashboard/registeredCourses:
+ * /api/v1/dashboard/registeredCourses:
  *   get:
  *     summary: Get all registered courses for a user
  *     description: This endpoint allows a user to fetch all courses they have registered for.
@@ -208,7 +208,7 @@ router.get('/dashboard/:courseId/registeredUsers', auth, authorizeRole('admin'),
 
 /**
  * @swagger
- * /api/v1/courses/dashboard/otherCourses:
+ * /api/v1/dashboard/otherCourses:
  *   get:
  *     summary: Get all other courses for a user
  *     description: This endpoint allows a user to fetch all other courses they can register.
@@ -293,7 +293,7 @@ router.get('/dashboard/otherCourses', auth, courseController.getOtherCourses);
 
 /**
  * @swagger
- * /api/v1/courses/dashboard/{courseId}/register:
+ * /api/v1/dashboard/{courseId}/register:
  *   get:
  *     summary: Register for other courses
  *     description: This endpoint allows a user to register for other courses.
@@ -378,7 +378,7 @@ router.get('/dashboard/otherCourses', auth, courseController.getOtherCourses);
  *                    type: boolean
  *                    example: false
  *  
- * @route   GET api/v1/dashboard/{courseId}/registier 
+ * @route   GET api/v1/dashboard/{courseId}/register 
  * @desc     Register for other courses
  * @access   Private
  */
