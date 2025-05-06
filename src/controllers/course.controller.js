@@ -63,9 +63,12 @@ exports.registerForCourse = async (req, res) => {
       return res.status(400).json({ success: false, message: "Course registration failed!" });
     }
     user.courses.push(course._id);
+    if (!user.hasChosenPath) {
+      user.hasChosenPath = true;
+    }
     await user.save();
 
-    res.status(200).json({ success: true, message: "You have successfully enrolled in this course", registration: registration })
+    res.status(200).json({ success: true, message: "You have successfully enrolled in this course", registration: registration, user: user });
   } catch (error) {
     console.error("Error in registering course:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
