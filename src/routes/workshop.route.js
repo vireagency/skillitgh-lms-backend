@@ -258,7 +258,7 @@ router.get('/workshops/:workshopId', auth, getWorkshopById);
 
 /**
  * @swagger
- * /api/v1/courses/dashboard/{workshopId}/register:
+ * /api/v1/workshops/{workshopId}/register:
  *   get:
  *     summary: Register for other courses
  *     description: This endpoint allows a user to register for upcoming workshops.
@@ -343,7 +343,7 @@ router.get('/workshops/:workshopId', auth, getWorkshopById);
  *                    type: boolean
  *                    example: false
  *  
- *  @route     POST api/workshops/register
+ *  @route     POST api/workshops/{workshopId}/register
  * @desc       Register for a workshop
  * @access     Private
  */
