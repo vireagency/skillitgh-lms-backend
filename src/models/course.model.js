@@ -14,7 +14,7 @@ const courseSchema = new mongoose.Schema({
   courseImage: {
     type: String,
     trim: true,
-    default: "https://thaka.bing.com/th/id/OIP.sTchjTmtqEuL0q8yjtNkDQHaGE?rs=1&pid=ImgDetMain"
+    default: "https://ece.ucsd.edu/sites/default/files/assets/New-Course.png"
   }
 }, { timestamps: true });
 
