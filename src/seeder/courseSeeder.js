@@ -1,5 +1,6 @@
 const Course = require('../models/course.model');
-const CourseRegistration = require('../models/course.registration');const { connectDB } = require('../config/db');
+const CourseRegistration = require('../models/course.registration');
+const { connectDB } = require('../../config/db');
 const User = require('../models/user.model');
 const bcrypt = require('bcrypt');
 

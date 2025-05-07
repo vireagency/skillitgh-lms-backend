@@ -1,5 +1,5 @@
 const Workshop = require('../models/workshop.model');
-const { connectDB } = require('../config/db');
+const { connectDB } = require('../../config/db');
 
 const seedWorkshops = async () => {
   try {
