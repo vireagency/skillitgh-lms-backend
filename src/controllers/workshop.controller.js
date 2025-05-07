@@ -48,7 +48,9 @@ exports.getWorkshopById = async (req, res) => {
 
 exports.createWorkshop = async (req, res) => {
   try {
-    const { title, description, date, duration, facilitator, location, resource, image } = req.body;
+    const { title, description, date, duration, facilitator, location, resource } = req.body;
+    const workshopImage = req.file?.path;
+
     if (!title || !description || !date || !duration || !facilitator || !location) {
       return res.status(400).json({ success: false, message: "All fields are required!" });
     }
@@ -61,7 +63,7 @@ exports.createWorkshop = async (req, res) => {
     if (workshopDate < today) {
       return res.status(400).json({ success: false, message: "Workshop date must be in the future!" });
     }
-    const newWorkshop = new Workshop({ title, description, date, duration, facilitator, location, resource, image });
+    const newWorkshop = new Workshop({ title, description, date, duration, facilitator, location, resource, workshopImage });
 
     if (req.files && req.files.length > 0) {
       newWorkshop.resource = req.files.map(file => file.path);
@@ -119,15 +121,19 @@ exports.registerForWorkshop = async (req, res) => {
     }
 
     workshop.attendees.push(userId); // Alternatively, you can use workshop.attendees.addToSet(id) to avoid duplicates
-    if (!workshop.isRegistered) {
-      workshop.isRegistered = true;
-    }
+  
     await workshop.save();
 
     user.workshops.push(workshopId);
+    if (!user.hasChosenPath) {
+      user.hasChosenPath = true; 
+    }
+    if (!user.workshopRegistered) {
+      user.workshopRegistered = true;
+    }
     await user.save();  
 
-    res.status(200).json({ success: true, message: "Successfully registered for the workshop!", registration: workshop });
+    res.status(200).json({ success: true, message: "Successfully registered for the workshop!", registration: workshop, user: user });
 
   } catch (error) {
     console.error("Error registering for workshop!", error);
