@@ -132,7 +132,8 @@ exports.getRegisteredUsers = async (req, res) => {
 // @desc      Create a new course
 exports.createCourse = async (req, res) => {
   try {
-    const { title, description, image } = req.body;
+    const { title, description } = req.body;
+    const courseImage = req.file?.path ;
     if (!title) {
       return res.status(400).json({ success: false, message: "Course title is required!" });
     }
@@ -142,8 +143,8 @@ exports.createCourse = async (req, res) => {
     }
     const course = await Course.create({
       title,
-      description,
-      image
+      description, 
+      courseImage
     });
     res.status(201).json({ success: true, message: "Course created successfully", course: course });
   } catch (error) {
