@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const courseController = require('../controllers/course.controller');
+const { uploadFile } = require('../middlewares/multer.middleware');
 
 const { auth } = require('../middlewares/auth.middleware');
 const { authorizeRole } = require('../middlewares/role.middleware');
@@ -109,7 +110,7 @@ router.post('/courses/register', auth, courseController.registerForCourse);
  * @desc      Create a new course
  * @access    Private (admin only)
  */
-router.post('/courses', auth, authorizeRole('admin'), courseController.createCourse);
+router.post('/courses', auth, authorizeRole('admin'), uploadFile, courseController.createCourse);
 
 /** 
  * @swagger
