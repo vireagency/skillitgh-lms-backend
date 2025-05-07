@@ -160,9 +160,10 @@ exports.getOtherCourses = async (req, res) => {
     if (!userId) {
       return res.status(401).json({ success: false, message: "Unauthorized: Please Login."})
     }
+    const availableCourses = await Course.find().sort('createdAt: -1');
     const registrations = await CourseRegistration.find({ enrolledUser: userId }).populate('course');
     if (!registrations || registrations.length === 0) {
-      return res.status(404).json({ success: false, message: "No registered courses found!" });
+      return res.status(200).json({ success: true, message: "Successfully fetched all courses", courses: availableCourses });
     }
     const registrationIds = registrations.map(reg => reg.course._id);
     const courses = await Course.find({ _id: { $nin: registrationIds }}).sort('createdAt: -1'); 
