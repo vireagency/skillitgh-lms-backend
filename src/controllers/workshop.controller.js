@@ -119,6 +119,7 @@ exports.registerForWorkshop = async (req, res) => {
     if (workshop.attendees.includes(userId)) {
       return res.status(400).json({ success: false, message: "You are already registered for this workshop!" });
     }
+    const isRegistered = workshop.attendees.includes(userId);
 
     workshop.attendees.push(userId); // Alternatively, you can use workshop.attendees.addToSet(id) to avoid duplicates
   
@@ -128,12 +129,10 @@ exports.registerForWorkshop = async (req, res) => {
     if (!user.hasChosenPath) {
       user.hasChosenPath = true; 
     }
-    if (!user.workshopRegistered) {
-      user.workshopRegistered = true;
-    }
+    
     await user.save();  
 
-    res.status(200).json({ success: true, message: "Successfully registered for the workshop!", registration: workshop, user: user });
+    res.status(200).json({ success: true, message: "Successfully registered for the workshop!", registration: {...workshop.toObject(), isRegistered }, user: user });
 
   } catch (error) {
     console.error("Error registering for workshop!", error);
