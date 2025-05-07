@@ -10,6 +10,8 @@ const {
    createWorkshop
 } = require('../controllers/workshop.controller');
 
+const { uploadFile } = require('../middlewares/multer.middleware');
+
 /**
  * @swagger
  * /api/v1/workshops/upcoming:
@@ -354,6 +356,6 @@ router.post('/workshops/:workshopId/register', auth, registerForWorkshop);
  * @desc       Create a new workshop
  * @access     Private
  */
-router.post('/workshops/', auth, authorizeRole('admin'), createWorkshop);
+router.post('/workshops/', auth, authorizeRole('admin'), uploadFile,createWorkshop);
 
 module.exports = router;
