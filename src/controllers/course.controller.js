@@ -202,10 +202,13 @@ exports.registerForOtherCourses = async (req, res) => {
     if (!otherCourse) {
       return res.status(400).json({ success: false, message: "Course registration failed!" });
     }
+    if (!user.hasChosenPath) {
+      user.hasChosenPath = true;
+    }
     user.courses.push(courseId);
     await user.save();
     
-    res.status(201).json({ success: true, message: "This course is successfully registered", registration: otherCourse });
+    res.status(201).json({ success: true, message: "This course is successfully registered", registration: otherCourse, user: user });
 
   } catch (error) {
     console.error("Error registering for another course:", error.message);
