@@ -132,10 +132,10 @@ exports.getRegisteredUsers = async (req, res) => {
 // @desc      Create a new course
 exports.createCourse = async (req, res) => {
   try {
-    const { title, description } = req.body;
+    const { title, description, duration, price } = req.body;
     const courseImage = req.file?.path ;
-    if (!title) {
-      return res.status(400).json({ success: false, message: "Course title is required!" });
+    if (!title || !duration ) {
+      return res.status(400).json({ success: false, message: "course title and duration are required!" });
     }
     const existingCourse = await Course.findOne({ title });
     if (existingCourse) {
@@ -144,7 +144,9 @@ exports.createCourse = async (req, res) => {
     const course = await Course.create({
       title,
       description, 
-      courseImage
+      courseImage,
+      duration,
+      price
     });
     res.status(201).json({ success: true, message: "Course created successfully", course: course });
   } catch (error) {
