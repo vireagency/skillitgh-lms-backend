@@ -36,6 +36,12 @@ workshopSchema = new mongoose.Schema({
     },
   },
   resource: [String],
+  price: {
+    type: String,
+    required: true,
+    trim: true,
+    default: "Free"
+  },
   location: {
     type: String,
     required: true,
