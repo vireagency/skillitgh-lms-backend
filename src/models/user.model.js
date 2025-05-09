@@ -35,6 +35,18 @@ const userSchema = new mongoose.Schema({
     enum: ['admin', 'user'],
     default: 'user'
   },
+  gender: {
+    type: String,
+    enum: ['Male', "Female"]
+  },
+  location: {
+    type: String,
+    trim: true
+  },
+  phoneNumber: {
+    type: String,
+    trim: true
+  },
   courses: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Course'
