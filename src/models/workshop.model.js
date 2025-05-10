@@ -12,8 +12,8 @@ workshopSchema = new mongoose.Schema({
   },
   workshopImage: {
     type: String,
-    required: true,
-    trim: true
+    trim: true,
+    default: "https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
   },
   date: {
     type: Date,
@@ -36,6 +36,12 @@ workshopSchema = new mongoose.Schema({
     },
   },
   resource: [String],
+  price: {
+    type: String,
+    required: true,
+    trim: true,
+    default: "Free"
+  },
   location: {
     type: String,
     required: true,
@@ -44,7 +50,7 @@ workshopSchema = new mongoose.Schema({
   attendees: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
-  }]
+  }],
 }, { timestamps: true })
 
 module.exports = mongoose.model('Workshop', workshopSchema);

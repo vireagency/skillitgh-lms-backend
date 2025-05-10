@@ -35,7 +35,7 @@ exports.register = async (req, res) => {
     const savedUser = await newUser.save();
     const userWithoutPassword = savedUser.toObject();
     delete userWithoutPassword.password; // remove password from user object
-    res.status(201).json({ success: true, message: "User registered successfully!", data: userWithoutPassword });
+    res.status(201).json({ success: true, message: "User registered successfully!", user: userWithoutPassword });
   } catch (err) {
     console.error("Error in registering user: ", err);
     res.status(500).json({ success: false, message: "Internal Server Error" });
@@ -69,7 +69,7 @@ exports.signIn = async (req, res) => {
     // const userObject = existingUser.toObject();
     // delete userObject.password;
 
-    res.status(200).json({ success: true, message: "User signed in successfully!", data: user, accessToken });
+    res.status(200).json({ success: true, message: "User signed in successfully!", user: user, token: accessToken });
   } catch (err) {
     console.log("Error in signing in user: ", err);
     res.status(500).json({ success: false, message: "Internal Server Error" });

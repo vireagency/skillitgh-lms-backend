@@ -6,9 +6,10 @@ const morgan = require('morgan');
 const authRoutes = require("./routes/auth.route");
 const workshopRoutes = require("./routes/workshop.route");
 const courseRoutes = require("./routes/course.route");
-const { connectDB } = require("./config/db");
-const swaggerDocs = require("./config/swagger");
+const { connectDB } = require("../config/db");
+const swaggerDocs = require("../config/swagger");
 const swaggerUi = require('swagger-ui-express');
+const userRoutes = require("./routes/user.route");
 
 dotenv.config();
 connectDB();
@@ -26,6 +27,6 @@ app.get('/', (req, res) => {
 })
 
 // Routes
-app.use("/api/v1/", authRoutes, workshopRoutes, courseRoutes);
+app.use("/api/v1/", authRoutes, workshopRoutes, courseRoutes, userRoutes);
 
 module.exports = app;
