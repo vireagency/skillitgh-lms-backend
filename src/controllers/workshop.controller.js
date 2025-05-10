@@ -48,8 +48,18 @@ exports.getWorkshopById = async (req, res) => {
 
 exports.createWorkshop = async (req, res) => {
   try {
-    const { title, description, date, duration, facilitator, location, resource, price } = req.body;
-    const workshopImage = req.file?.path;
+    const { title, description, date, duration, location, price } = req.body;
+    const workshopImage = req.files?.workshopImage?.[0]?.path;
+    const resource = req.files?.resource?.map(file => file.path);
+
+    console.log("Workshop Image and Resource:", req.files);
+
+     let facilitator;
+    try {
+      facilitator = JSON.parse(req.body.facilitator);
+    } catch (error) {
+      return res.status(400).json({ success: false, message: "Invalid facilitator data!" });
+    }
 
     if (!title || !description || !date || !duration || !facilitator || !location) {
       return res.status(400).json({ success: false, message: "All fields are required!" });
@@ -63,11 +73,14 @@ exports.createWorkshop = async (req, res) => {
     if (workshopDate < today) {
       return res.status(400).json({ success: false, message: "Workshop date must be in the future!" });
     }
+
     const newWorkshop = new Workshop({ title, description, date, duration, facilitator, location, resource, workshopImage, price });
 
-    if (req.files && req.files.length > 0) {
-      newWorkshop.resource = req.files.map(file => file.path);
-    }
+    // if (req.files && req.files.length > 0) {
+    //   newWorkshop.resource = req.files.map(file => file.path);
+    // }
+
+
     await newWorkshop.save();
     res.status(201).json({ success: true, message: "Workshop created successfully.", workshop: newWorkshop });
   } catch (error) {
@@ -138,6 +151,24 @@ exports.registerForWorkshop = async (req, res) => {
 
   } catch (error) {
     console.error("Error registering for workshop!", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+}
+
+exports.updateWorkshopResources = async (req, res) => {
+  try { 
+    const { workshopId } = req.params;
+    const workshop = await Workshop.findById(workshopId);
+    if (!workshop) {
+      return res.status(404).json({ success: false, message: "Workshop not found!"});
+    }
+    const newResources = req.files?.map(file => file.path);
+    workshop.resource = [...workshop.resource, ...newResources]
+
+    await workshop.save();
+    res.status(200).json({ success: true, message: "Workshop resources updated successfully.", workshop: workshop.resource });
+  } catch (error) {
+    console.error("Error updating workshop resources:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 }

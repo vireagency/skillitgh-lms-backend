@@ -10,9 +10,28 @@ const { connectDB } = require("../config/db");
 const swaggerDocs = require("../config/swagger");
 const swaggerUi = require('swagger-ui-express');
 const userRoutes = require("./routes/user.route");
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+const xss = require('xss-clean');
+const hpp = require('hpp');
+const compression = require('compression');
+const mongoSanitize = require('express-mongo-sanitize');
 
 dotenv.config();
 connectDB();
+
+// Middlewares
+
+app.use(helmet()); // Set security HTTP headers
+app.use(compression()); // Compress response bodies for all requests
+app.use(mongoSanitize()); // Sanitize data against NoSQL injection attacks
+app.use(xss()); // Sanitize data against XSS attacks
+app.use(hpp()); // Prevent HTTP Parameter Pollution
+app.use(rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+  message: "Too many requests from this IP, please try again later."
+})); // Limit requests to 100 per 15 minutes
 
 app.use(cors({
   origin: process.env.client_URL,

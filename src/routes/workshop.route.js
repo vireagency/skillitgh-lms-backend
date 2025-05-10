@@ -7,10 +7,12 @@ const {
    getPreviousWorkshops,
    getWorkshopById,
    registerForWorkshop,
-   createWorkshop
+   createWorkshop,
+   updateWorkshopResources,
+   deleteWorkshop
 } = require('../controllers/workshop.controller');
 
-const { uploadFile } = require('../middlewares/multer.middleware');
+const upload = require('../middlewares/multer.middleware');
 
 /**
  * @swagger
@@ -349,13 +351,76 @@ router.get('/workshops/:workshopId', auth, getWorkshopById);
  * @desc       Register for a workshop
  * @access     Private
  */
+
 router.post('/workshops/:workshopId/register', auth, registerForWorkshop);
 
 /** 
+ * @swagger
+ * /api/v1/workshops/:
+ *   post:
+ *     summary: Create a new workshop
+ *     description: This endpoint allows an admin to create a workshop
+ *     content:
+ *       application/json
+ *       
+ * 
  * @route     POST api/workshops/
  * @desc       Create a new workshop
  * @access     Private
  */
-router.post('/workshops/', auth, authorizeRole('admin'), uploadFile,createWorkshop);
+
+router.post('/workshops/', auth, authorizeRole('admin'), upload.fields([
+   { name: 'workshopImage', maxCount: 1 },
+   { name: 'resource', maxCount: 5 } 
+]),createWorkshop);
+
+
+router.patch('/workshops/:workshopId', auth, authorizeRole('admin'), upload.array('resource', 5), updateWorkshopResources);
+/**
+ * @swagger
+ * /api/v1/workshops/{workshopId}/update:
+ *   patch:
+ *     summary: Update workshop resources
+ *     description: This endpoint allows an admin to update the resources of a workshop.
+ *     parameters:
+ *       - in: path
+ *         name: workshopId
+ *         required: true
+ *         description: The ID of the workshop to update.
+ *         schema:
+ *           type: string
+ *           example: "1234567890abcdef12345678"
+ *     tags: ["Workshops"]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               resource:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
+ *     responses:
+ *       200:
+ *         description: Successfully updated workshop resources.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Workshop resources updated successfully."
+ * 
+ * @route    PATCH api/workshops/:workshopId
+ * @desc     Update workshop resources
+ * @access   Private
+ */
+
+router.delete('/workshops/:workshopId', auth, authorizeRole('admin'), deleteWorkshop);
+
 
 module.exports = router;
