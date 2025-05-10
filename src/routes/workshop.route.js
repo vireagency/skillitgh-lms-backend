@@ -229,7 +229,7 @@ router.get('/workshops/upcoming', auth,  getUpcomingWorkshops);
  *                            example: "naanabena@gmail.com"
  *                      date:
  *                        type: string
- *                        examvple: "2024-10-01T10:00:00Z"
+ *                        example: "2024-10-01T10:00:00Z"
  *                      duration:
  *                        type: string
  *                        example: "2 hours"
