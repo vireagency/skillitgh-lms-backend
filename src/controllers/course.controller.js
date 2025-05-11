@@ -134,6 +134,7 @@ exports.createCourse = async (req, res) => {
   try {
     const { title, description, duration, price } = req.body;
     const courseImage = req.file?.path ;
+    console.log("uploaded file:", req.file);
     if (!title || !duration ) {
       return res.status(400).json({ success: false, message: "course title and duration are required!" });
     }
@@ -148,9 +149,13 @@ exports.createCourse = async (req, res) => {
       duration,
       price
     });
+    
+    if (!course) {
+      return res.status(400).json({ success: false, message: "Course creation failed!" });
+    }
     res.status(201).json({ success: true, message: "Course created successfully", course: course });
   } catch (error) {
-    console.error("Error in creating course:", error);
+    console.error("Error in creating course:", error.message);
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 }
