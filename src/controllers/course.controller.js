@@ -1,7 +1,8 @@
 const Course = require('../models/course.model');
 const CourseRegistration = require('../models/course.registration');
 const User = require('../models/user.model');
-const sendEmail = require('../utils/email.transport');
+const { sendMail } = require('../utils/email.transport');
+//const sendEmail = require('../utils/email.transport.js')
 
 exports.getCourses = async (req, res) => {
   try {
@@ -73,9 +74,9 @@ exports.registerForCourse = async (req, res) => {
     const emailData = {
       email: user.email,
       subject: "Course Registration Confirmation",
-      text: `Congratulations!\n\nYou have successfully registered for the SkillitGh ${course.title} course.`
+      text: `Congratulations ${user.firstName}!\n\nYou have successfully registered for the SkillitGh ${course.title} course.`
     };
-    await sendEmail(emailData);
+    await sendMail(emailData);
 
     res.status(200).json({ success: true, message: "You have successfully enrolled in this course", registration: registration, user: user });
   } catch (error) {
@@ -229,6 +230,97 @@ exports.registerForOtherCourses = async (req, res) => {
 
   } catch (error) {
     console.error("Error registering for another course:", error.message);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+}
+
+// @desc      Update a course
+exports.updateCourse = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    const { title, description, duration, price } = req.body;
+    const courseImage = req.file?.path ;
+    if (!courseId) {
+      return res.status(400).json({ success: false, message: "Course ID is required!" });
+    }
+    // const course = await Course.findById(courseId);
+    // if (!course) {
+    //   return res.status(404).json({ success: false, message: "Course not found!" });
+    // }
+    // course.title = title || course.title;
+    // course.description = description || course.description;
+    // course.duration = duration || course.duration;
+    // course.price = price || course.price;
+    // if (courseImage) {
+    //   course.courseImage = courseImage;
+    // }
+
+    const course = await Course.findByIdAndUpdate(courseId, {
+      title,
+      description,
+      duration,
+      price,
+      courseImage
+    }, { new: true, runValidators: true });
+
+    if (!course) {
+      return res.status(404).json({ success: false, message: "Course not found!" });
+    }
+    
+    await course.save();
+    res.status(200).json({ success: true, message: "Course updated successfully", course: course });
+  } catch (error) {
+    console.error("Error in updating the course:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+}
+
+// @desc      Delete a course
+exports.deleteCourse = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    if (!courseId) {
+      return res.status(400).json({ success: false, message: "Course ID is required!" });
+    }
+    const course = await Course.findByIdAndDelete(courseId);
+    if (!course) {
+      return res.status(404).json({ success: false, message: "Course not found!" });
+    }
+    res.status(200).json({ success: true, message: "Course deleted successfully" });
+  } catch (error) {
+    console.error("Error in deleting the course:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+}
+
+exports.unregisterFromCourse = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    const { userId } = req.user;
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "Unauthorized: Please Login."});
+    }
+    if (!courseId) {
+      return res.status(400).json({ success: false, message: "Course ID is required!" });
+    }
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.status(404).json({ success: false, message: "Course not found!" });
+    }
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found!" });
+    }
+    const registration = await CourseRegistration.findOneAndDelete({ enrolledUser: userId, course: courseId });
+    if (!registration) {
+      return res.status(404).json({ success: false, message: "You are not registered for this course!" });
+    }
+    user.courses = user.courses.filter(course => course.toString() !== courseId);
+    await user.save();
+
+    res.status(200).json({ success: true, message: "Successfully unregistered from the course", registration: registration });
+  } catch (error) {
+    console.error("Error in unregistering from course:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 }
