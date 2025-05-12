@@ -9,7 +9,10 @@ const {
    registerForWorkshop,
    createWorkshop,
    updateWorkshopResources,
-   deleteWorkshop
+   deleteWorkshop,
+   getWorkshopAttendees,
+   unregisterFromWorkshop,
+   updateWorkshop
 } = require('../controllers/workshop.controller');
 
 const upload = require('../middlewares/multer.middleware');
@@ -420,7 +423,35 @@ router.patch('/workshops/:workshopId', auth, authorizeRole('admin'), upload.arra
  * @access   Private
  */
 
+/**
+ * @route    DELETE api/workshops/{workshopId}
+ * @desc     Delete a workshop
+ * @access   Private
+ */
 router.delete('/workshops/:workshopId', auth, authorizeRole('admin'), deleteWorkshop);
 
+/**
+ * @route   PATCH api/workshops/{workshopId}
+ * @desc    Update a workshop
+ * @access  Private
+ */   
+router.patch('/workshops/:workshopId', auth, authorizeRole('admin'), upload.fields([
+   { name: 'workshopImage', maxCount: 1 },
+   { name: 'resource', maxCount: 5 }
+]), updateWorkshop);
+
+/**
+ * @route    GET api/workshops/{workshopId}/attendees
+ * @desc     Get all attendees for a workshop
+ * @access   Private
+ */
+router.get('/workshops/:workshopId/attendees', auth, authorizeRole('admin'), getWorkshopAttendees);
+
+/**
+ * @route    Post api/workshops/{workshopId}/unregister
+ * @desc     Unregister from a workshop
+ * @access   Private
+ */
+router.post('/workshops/:workshopId/unregister', auth, unregisterFromWorkshop);
 
 module.exports = router;
