@@ -15,7 +15,7 @@ const rateLimit = require('express-rate-limit');
 const xss = require('xss-clean');
 const hpp = require('hpp');
 const compression = require('compression');
-const mongoSanitize = require('express-mongo-sanitize');
+//const mongoSanitize = require('express-mongo-sanitize');
 
 dotenv.config();
 connectDB();
@@ -24,7 +24,7 @@ connectDB();
 
 app.use(helmet()); // Set security HTTP headers
 app.use(compression()); // Compress response bodies for all requests
-app.use(mongoSanitize()); // Sanitize data against NoSQL injection attacks
+//app.use(mongoSanitize()); // Sanitize data against NoSQL injection attacks
 app.use(xss()); // Sanitize data against XSS attacks
 app.use(hpp()); // Prevent HTTP Parameter Pollution
 app.use(rateLimit({
