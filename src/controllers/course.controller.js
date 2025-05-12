@@ -1,6 +1,7 @@
 const Course = require('../models/course.model');
 const CourseRegistration = require('../models/course.registration');
 const User = require('../models/user.model');
+const sendEmail = require('../utils/email.transport');
 
 exports.getCourses = async (req, res) => {
   try {
@@ -68,6 +69,14 @@ exports.registerForCourse = async (req, res) => {
     }
     await user.save();
 
+    // Send email to user
+    const emailData = {
+      email: user.email,
+      subject: "Course Registration Confirmation",
+      text: `Congratulations!\n\nYou have successfully registered for the SkillitGh ${course.title} course.`
+    };
+    await sendEmail(emailData);
+
     res.status(200).json({ success: true, message: "You have successfully enrolled in this course", registration: registration, user: user });
   } catch (error) {
     console.error("Error in registering course:", error);
@@ -134,7 +143,6 @@ exports.createCourse = async (req, res) => {
   try {
     const { title, description, duration, price } = req.body;
     const courseImage = req.file?.path ;
-    console.log("uploaded file:", req.file);
     if (!title || !duration ) {
       return res.status(400).json({ success: false, message: "course title and duration are required!" });
     }
