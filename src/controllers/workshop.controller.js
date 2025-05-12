@@ -1,5 +1,6 @@
 const Workshop = require('../models/workshop.model');
 const User = require('../models/user.model');
+const { sendMail } = require('../utils/email.transport');
 
 exports.getUpcomingWorkshops = async (req, res) => {
   try {
@@ -147,10 +148,56 @@ exports.registerForWorkshop = async (req, res) => {
     
     await user.save();  
 
+    // Send confirmation email
+    const email = user.email;
+    const subject = "Workshop Registration Confirmation";
+    const text = `You have successfully registered for the workshop: ${workshop.title}. \n\nDetails:\nTitle: ${workshop.title}\nDate: ${workshop.date}\nDuration: ${workshop.duration}\nLocation: ${workshop.location}\nPrice: ${workshop.price}`;
+    await sendMail({ email, subject, text });
+
     res.status(200).json({ success: true, message: "Successfully registered for the workshop!", registration: {...workshop.toObject(), isRegistered } });
 
   } catch (error) {
     console.error("Error registering for workshop!", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+}
+
+exports.updateWorkshop = async (req, res) => {
+  try {
+    const { workshopId } = req.params;
+    const { title, description, date, duration, location, price } = req.body;
+    const workshopImage = req.files?.workshopImage?.[0]?.path;
+    const resource = req.files?.resource?.map(file => file.path);
+
+    if (!title || !description || !date || !duration || !location) {
+      return res.status(400).json({ success: false, message: "All fields are required!" });
+    }
+    const workshop = await Workshop.findById(workshopId);
+    if (!workshop) {
+      return res.status(404).json({ success: false, message: "Workshop not found!" });
+    }
+
+    const today = new Date();
+    const workshopDate = new Date(date);
+    if (workshopDate < today) {
+      return res.status(400).json({ success: false, message: "Workshop date must be in the future!" });
+    }
+    workshop.title = title;
+    workshop.description = description;
+    workshop.date = date;
+    workshop.duration = duration;
+    workshop.location = location;
+    workshop.price = price;
+    if (workshopImage) {
+      workshop.workshopImage = workshopImage;
+    }
+    if (resource) {
+      workshop.resource = [...workshop.resource, ...resource];
+    }
+    await workshop.save();
+    res.status(200).json({ success: true, message: "Workshop updated successfully.", workshop });
+  } catch (error) {
+    console.error("Error updating workshop:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 }
@@ -170,6 +217,50 @@ exports.updateWorkshopResources = async (req, res) => {
   } catch (error) {
     console.error("Error updating workshop resources:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+}
+
+exports.getWorkshopAttendees = async (req, res) => {
+  try {
+    const { workshopId } = req.params;
+    const workshop = await Workshop.findById(workshopId).populate('attendees', 'firstName lastName email');
+    if (!workshop) {
+      return res.status(404).json({ success: false, message: "Workshop not found!" });
+    }
+    res.status(200).json({ success: true, message: "Workshop attendees fetched successfully.", attendees: workshop.attendees });
+  } catch (error) {
+    console.error("Error fetching workshop attendees:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+}
+
+exports.unregisterFromWorkshop = async (req, res) => {
+  try {
+    const { workshopId } = req.params;
+    const { userId } = req.user;
+
+    const workshop = await Workshop.findById(workshopId);
+    if (!workshop) {
+      return res.status(404).json({ success: false, message: "Workshop not found!" });
+    }
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found!" });
+    }
+    const isRegistered = workshop.attendees.includes(userId) && user.workshops.includes(workshopId);
+    if (!isRegistered) {
+      return res.status(400).json({ success: false, message: "You are not registered for this workshop!" });
+    }
+    workshop.attendees = workshop.attendees.filter(attendee => attendee.toString() !== userId.toString());
+    user.workshops = user.workshops.filter(workshop => workshop.toString() !== workshopId.toString());
+    await workshop.save();
+    await user.save();
+
+    res.status(200).json({ success: true, message: "Successfully unregistered from the workshop!" });
+
+  } catch (error) {
+    console.error("Error unregistering from workshop:", error);
+    res.status(500).json({ success: false, messasge: "Internal Server Error" });
   }
 }
 
