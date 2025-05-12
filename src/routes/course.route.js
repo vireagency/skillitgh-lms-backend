@@ -385,4 +385,25 @@ router.get('/dashboard/otherCourses', auth, courseController.getOtherCourses);
  */
 router.post('/dashboard/:courseId/register', auth, courseController.registerForOtherCourses);
 
+/**
+ * @route   DELETE api/v1/courses/:courseId
+ * @desc    Delete a course
+ * @access  Private (admin only)
+ */
+router.delete('/:courseId', auth, authorizeRole('admin'), courseController.deleteCourse);
+
+/**
+ * @route   PUT api/v1/courses/:courseId
+ * @desc    Update a course
+ * @access  Private (admin only)
+ */
+router.put('/:courseId', auth, authorizeRole('admin'), upload.single('courseImage'), courseController.updateCourse);
+
+/**
+ * @route   POST api/v1/dashboard/:courseId/unregister
+ * @desc    Unregister from a course
+ * @access  Private
+ */
+router.post('/dashboard/:courseId/unregister', auth, courseController.unregisterFromCourse);
+
 module.exports = router;
