@@ -75,3 +75,15 @@ exports.signIn = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 } 
+
+// @desc    sign out user
+
+exports.signOut = async (req, res) => {
+  try {
+    res.clearCookie("accessToken");
+    res.status(200).json({ success: true, message: "User signed out successfully!" });
+  } catch (err) {
+    console.log("Error in signing out user: ", err);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+}
