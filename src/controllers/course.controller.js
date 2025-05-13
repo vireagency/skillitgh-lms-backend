@@ -225,6 +225,15 @@ exports.registerForOtherCourses = async (req, res) => {
     }
     user.courses.push(courseId);
     await user.save();
+
+    // Send email to user
+    const emailData = {
+      email: user.email,
+      subject: "Course Registration Confirmation",
+      text: `Congratulations ${user.firstName}!\n\nYou have successfully registered for the SkillitGh ${existingCourse.title} course.`
+    }
+
+    await sendMail(emailData);
     
     res.status(201).json({ success: true, message: "This course is successfully registered", registration: otherCourse, user: user });
 
