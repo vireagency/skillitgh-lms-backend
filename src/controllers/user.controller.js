@@ -58,3 +58,33 @@ exports.updateUserProfile = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 } 
+
+exports.deleteUserProfile = async (req, res) => {
+  try {
+    const { userId } = req.user;
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "Unauthorized: Please Login." });
+    }
+    const user = await User.findByIdAndDelete(userId);
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found!" });
+    }
+    res.status(200).json({ success: true, message: "User profile deleted successfully!" });
+  } catch (error) {
+    console.error("Error deleting user profile:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+}
+
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find();
+    if (!users) {
+      return res.status(404).json({ success: false, message: "No users found!" });
+    }
+    res.status(200).json({ success: true, message: "Users fetched successfully!", users: users });
+  } catch (error) {
+    console.error("Error fetching all users:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+}
