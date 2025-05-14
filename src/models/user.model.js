@@ -37,15 +37,18 @@ const userSchema = new mongoose.Schema({
   },
   gender: {
     type: String,
-    enum: ['Male', 'Female']
+    enum: ['Male', 'Female'],
+    default: "sex not specified"
   },
   location: {
     type: String,
-    trim: true
+    trim: true,
+    default: "location not specified"
   },
   phoneNumber: {
     type: String,
-    trim: true
+    trim: true,
+    default: "xxx-xxxx-xxxx"
   },
   courses: [{
     type: mongoose.Schema.Types.ObjectId,
