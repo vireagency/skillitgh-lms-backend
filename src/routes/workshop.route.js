@@ -12,7 +12,8 @@ const {
    deleteWorkshop,
    getWorkshopAttendees,
    unregisterFromWorkshop,
-   updateWorkshop
+   updateWorkshop,
+   getRegisteredWorkshops
 } = require('../controllers/workshop.controller');
 
 const upload = require('../middlewares/multer.middleware');
@@ -357,16 +358,7 @@ router.get('/workshops/:workshopId', auth, getWorkshopById);
 
 router.post('/workshops/:workshopId/register', auth, registerForWorkshop);
 
-/** 
- * @swagger
- * /api/v1/workshops/:
- *   post:
- *     summary: Create a new workshop
- *     description: This endpoint allows an admin to create a workshop
- *     content:
- *       application/json
- *       
- * 
+/**
  * @route     POST api/workshops/
  * @desc       Create a new workshop
  * @access     Private
@@ -375,7 +367,7 @@ router.post('/workshops/:workshopId/register', auth, registerForWorkshop);
 router.post('/workshops/', auth, authorizeRole('admin'), upload.fields([
    { name: 'workshopImage', maxCount: 1 },
    { name: 'resource', maxCount: 5 } 
-]),createWorkshop);
+]), createWorkshop);
 
 
 router.patch('/workshops/:workshopId', auth, authorizeRole('admin'), upload.array('resource', 5), updateWorkshopResources);
@@ -428,6 +420,35 @@ router.patch('/workshops/:workshopId', auth, authorizeRole('admin'), upload.arra
  * @desc     Delete a workshop
  * @access   Private
  */
+
+/**
+ * @swagger
+ * /api/v1/workshops/{workshopId}:
+ *   delete:
+ *     summary: Delete a workshop
+ *     description: This endpoint allows an admin to delete a workshop.
+ *     parameters:
+ *       - in: path
+ *         name: workshopId
+ *         required: true
+ *         description: The ID of the workshop to delete.
+ *         schema:
+ *           type: string
+ *           example: "1234567890abcdef12345678"
+ *     tags: ["Workshops"]
+ *     responses:
+ *       200:
+ *         description: Successfully deleted the workshop.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Workshop deleted successfully."
+ */
+
 router.delete('/workshops/:workshopId', auth, authorizeRole('admin'), deleteWorkshop);
 
 /**
@@ -439,6 +460,36 @@ router.patch('/workshops/:workshopId', auth, authorizeRole('admin'), upload.fiel
    { name: 'workshopImage', maxCount: 1 },
    { name: 'resource', maxCount: 5 }
 ]), updateWorkshop);
+/**
+ * @swagger
+ * /api/v1/workshops/{workshopId}/attendees:
+ *   get:
+ *     summary: Get all attendees for a workshop
+ *     description: This endpoint retrieves a list of all attendees for a specific workshop.
+ *     parameters:
+ *       - in: path
+ *         name: workshopId
+ *         required: true
+ *         description: The ID of the workshop to get attendees for.
+ *         schema:
+ *           type: string
+ *           example: "1234567890abcdef12345678"
+ *     tags: ["Workshops"]
+ *     responses:
+ *       200:
+ *         description: A list of attendees for the workshop
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Workshop attendees retrieved successfully."
+ */
 
 /**
  * @route    GET api/workshops/{workshopId}/attendees
@@ -447,11 +498,69 @@ router.patch('/workshops/:workshopId', auth, authorizeRole('admin'), upload.fiel
  */
 router.get('/workshops/:workshopId/attendees', auth, authorizeRole('admin'), getWorkshopAttendees);
 
+
+
 /**
  * @route    Post api/workshops/{workshopId}/unregister
  * @desc     Unregister from a workshop
  * @access   Private
  */
 router.post('/workshops/:workshopId/unregister', auth, unregisterFromWorkshop);
+
+/**
+ * @swagger
+ * /api/v1/workshops/{workshopId}/unregister:
+ *   post:
+ *     summary: Unregister from a workshop
+ *     description: This endpoint allows a user to unregister from a workshop.
+ *     parameters:
+ *       - in: path
+ *         name: workshopId
+ *         required: true
+ *         description: The ID of the workshop to unregister from.
+ *         schema:
+ *           type: string
+ *           example: "1234567890abcdef12345678"
+ *     tags: ["Workshops"]
+ *     responses:
+ *       200:
+ *         description: Successfully unregistered from the workshop.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Successfully unregistered from the workshop."
+ */
+/**
+ * @route    GET api/workshops/registeredWorkshops
+ * @desc     Get all registered workshops
+ * @access   Private
+ */
+router.get('/workshops/registeredWorkshops', auth, authorizeRole('admin'), getRegisteredWorkshops);
+/**
+ * @swagger
+ * /api/v1/workshops/registeredWorkshops:
+ *   get:
+ *     summary: Get all registered workshops
+ *     description: This endpoint retrieves a list of all registered workshops for the user.
+ *     tags: [Workshops]
+ *     responses:
+ *       200:
+ *         description: A list of registered workshops
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Registered workshops retrieved successfully."
+ */
 
 module.exports = router;
