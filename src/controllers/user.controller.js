@@ -24,6 +24,8 @@ exports.updateUserProfile = async (req, res) => {
       return res.status(401).json({ success: false, message: "Unauthorized: Please Login." });
     }
     const { firstName, lastName, email, gender, location, phoneNumber } = req.body;
+    const userImage = req.file?.path;
+
     if (!firstName || !lastName || !email) {
       return res.status(400).json({ success: false, message: "All fields are required!" });
     }
@@ -33,7 +35,8 @@ exports.updateUserProfile = async (req, res) => {
       email,
       gender,
       location,
-      phoneNumber
+      phoneNumber,
+      userImage
     }, { new: true, runValidators: true });
     
     if (!updateUser) {
