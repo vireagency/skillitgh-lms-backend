@@ -3,6 +3,7 @@ const router = express.Router();
 const { getUserProfile, updateUserProfile, deleteUserProfile, getAllUsers } = require('../controllers/user.controller');
 const { auth } = require('../middlewares/auth.middleware');
 const { authorizeRole } = require('../middlewares/role.middleware');
+const upload = require('../middlewares/multer.middleware');
 
 /**
  * @route    GET api/v1/dashboard/profile
@@ -16,7 +17,7 @@ router.get('/dashboard/profile', auth, getUserProfile);
  * @desc     Update user profile
  * @access   Private
  */
-router.put('/dashboard/profile', auth, updateUserProfile);
+router.put('/dashboard/profile', auth, upload.single('userImage'), updateUserProfile);
 
 /** @  
  * @route    DELETE api/v1/dashboard/profile
