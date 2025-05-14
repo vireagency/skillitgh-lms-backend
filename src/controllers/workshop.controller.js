@@ -264,5 +264,19 @@ exports.unregisterFromWorkshop = async (req, res) => {
   }
 }
 
-
-
+exports.getRegisteredWorkshops = async(req, res) => {
+  try {
+    const workshops = await Workshop.find({ attendees: { $ne: [] } }).populate('attendees', 'firstName lastName userImage email');
+    if (!workshops || workshops.length === 0) {
+      return res.status(404).json({ success: false, message: "No registered workshops found!" });
+    }
+    // const registeredWorkshops = workshops.filter((member) => member.attendees.length > 0)
+    // if (!registeredWorkshops || registeredWorkshops.length === 0) {
+    //   return res.status(404).json({ success: false, message: "No registered workshops found!" });
+    // }
+    res.status(200).json({ success: true, message: "These are the registered workshops.", workshops: workshops });
+  } catch (error) {
+    console.error("Error in getting all registered workshops:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+}
