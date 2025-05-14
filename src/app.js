@@ -34,7 +34,11 @@ app.use(rateLimit({
 })); // Limit requests to 100 per 15 minutes
 
 app.use(cors({
-  origin: process.env.client_URL,
+  origin: [
+    process.env.client_URL,
+    process.env.client_URL_PROD1, // Add your production client URL in .env as PROD_CLIENT_URL
+    process.env.client_URL_PROD2
+  ],
   credentials: true,
 }));
 app.use(express.json());
