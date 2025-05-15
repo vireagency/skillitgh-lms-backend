@@ -4,12 +4,35 @@ const { sendMail } = require('../utils/email.transport');
 
 exports.getUpcomingWorkshops = async (req, res) => {
   try {
+    const page = parseInt(req.query.page) || 1 ;
+    const limit = 6;
+    const skip = (page - 1) * limit;
+
     const today = new Date();
-    const upcomingWorkshops = await Workshop.find({ date: { $gte: today }});
+
+    const total = await Workshop.countDocuments({ date: { $gte: today }});
+
+    const upcomingWorkshops = await Workshop.find({ date: { $gte: today }})
+    .sort({ date: 1 })
+    .skip(skip)
+    .limit(limit);
+
     if (!upcomingWorkshops || upcomingWorkshops.length === 0) {
       return res.status(404).json({ success: false, message: "No upcoming workshops found!" });
     }
-    res.status(200).json({ success: true, status: "Upcoming", message: "These are the upcoming workshops for you.", workshops: upcomingWorkshops });
+    res.status(200).json({ 
+      success: true, 
+      status: "Upcoming", 
+      message: "These are the upcoming workshops for you.",
+      currentPage: page,
+      totalPages: Math.ceil(total / limit),
+      totalWorkshops: total,
+      hasNextPage: page * limit < total,
+      hasPrevPage: page > 1,
+      nextPage: page + 1,
+      prevPage: page - 1 > 0 ? page - 1 : null,
+      workshops: upcomingWorkshops 
+    });
   } catch (error) {
     console.error("Error fetching upcoming workshops: ", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
@@ -18,12 +41,34 @@ exports.getUpcomingWorkshops = async (req, res) => {
 
 exports.getPreviousWorkshops = async (req, res) => {
   try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = 6;
+    const skip = (page - 1) * limit;
+
     const today = new Date();
-    const previousWorkshops = await Workshop.find({ date: { $lt: today }});
+
+    const total = await Workshop.countDocuments({ date: { $lt: today }});
+    const previousWorkshops = await Workshop.find({ date: { $lt: today }})
+    .sort({ date: -1 })
+    .skip(skip)
+    .limit(limit);
+
     if (!previousWorkshops || previousWorkshops.length === 0) {
       return res.status(404).json({ success: false, message: "No previous workshops found!" });
     }
-    res.status(200).json({ success: true, status: "Previous", message: "These are the previous workshops for you.", workshops: previousWorkshops });
+    res.status(200).json({ 
+      success: true, 
+      status: "Previous", 
+      message: "These are the previous workshops for you.", 
+      currentPage: page,
+      totalPages: Math.ceil(total / limit),
+      totalWorkshops: total,
+      hasNextPage: page * limit < total,
+      hasPrevPage: page > 1,
+      nextPage: page + 1,
+      prevPage: page - 1 > 0 ? page - 1 : null,
+      workshops: previousWorkshops 
+    });
   } catch (error) {
     console.error("Error fetching previous workshops:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
@@ -277,6 +322,70 @@ exports.getRegisteredWorkshops = async(req, res) => {
     res.status(200).json({ success: true, message: "These are the registered workshops.", workshops: workshops });
   } catch (error) {
     console.error("Error in getting all registered workshops:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+}
+
+exports.getMyWorkshops = async (req, res) => {
+  try {
+    const { userId } = req.user;
+    const workshops = await User.findById(userId).populate('workshops', 'title description date duration location price workshopImage facilitator resource');
+    if (!workshops || workshops.length === 0) {
+      return res.status(404).json({ success: false, message: "No workshops found!" });
+    }
+    const foundWorkshops = workshops.map(workshop => workshop.workshops);
+    if (!foundWorkshops || foundWorkshops.length === 0) {
+      return res.status(404).json({ success: false, message: "No workshops found!" });
+    }
+    res.status(200).json({ success: true, message: "These are your workshops.", workshops: foundWorkshops });
+  } catch (error) {
+    console.error("Error fetching my workshops:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+}
+
+exports.getAllWorkshops = async (req, res) => {
+  try {
+    const { type } = req.query;
+    const page = parseInt(req.query.page) || 1;
+    const limit = 6;
+    const skip = (page - 1) * limit;
+    const today = new Date();
+
+    let filter = {};
+    if (type === "upcoming") {
+      filter = { date: { $gte: today } };
+    } else if (type === "previous") {
+      filter = { date: { $lt: today } };
+    }
+
+    const total = await Workshop.countDocuments(filter);
+
+    const workshops = await Workshop.find(filter)
+      .sort({ date: type === "upcoming" ? 1 : -1 })
+      .skip(skip)
+      .limit(limit);
+
+    if (!workshops || workshops.length === 0) {
+      return res.status(404).json({ success: false, message: "No workshops found!" });
+    }
+
+    res.status(200).json({
+      success: true,
+      status: type === "upcoming" ? "Upcoming" : "Previous",
+      message: `These are the ${type} workshops.`,
+      currentPage: page,
+      totalPages: Math.ceil(total / limit),
+      totalWorkshops: total,
+      hasNextPage: page * limit < total,
+      hasPrevPage: page > 1,
+      nextPage: page + 1,
+      prevPage: page - 1 > 0 ? page - 1 : null,
+      workshops: workshops
+    });
+
+  } catch (error) {
+    console.error("Error fetching all workshops", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 }
