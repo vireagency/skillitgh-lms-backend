@@ -17,6 +17,8 @@ const xss = require('xss-clean');
 //const compression = require('compression');
 //const mongoSanitize = require('express-mongo-sanitize');
 
+const cookieParser = require('cookie-parser');
+
 dotenv.config();
 connectDB();
 
@@ -44,6 +46,8 @@ app.use(cors({
 app.use(express.json());
 app.use(morgan('dev'));
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
+app.use(cookieParser());
 
 app.get('/', (req, res) => {
   res.send("Server is healthy!")
