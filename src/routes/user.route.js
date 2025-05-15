@@ -1,6 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const { getUserProfile, updateUserProfile, deleteUserProfile, getAllUsers } = require('../controllers/user.controller');
+const { 
+  getUserProfile, 
+  updateUserProfile, 
+  deleteUserProfile, 
+  getAllUsers,
+  deleteUserProfileByAdmin,
+  updateUserProfileByAdmin,
+  getUserProfileByAdmin
+} = require('../controllers/user.controller');
 const { auth } = require('../middlewares/auth.middleware');
 const { authorizeRole } = require('../middlewares/role.middleware');
 const upload = require('../middlewares/multer.middleware');
@@ -206,5 +214,26 @@ router.delete('/dashboard/profile', auth, authorizeRole('admin'), deleteUserProf
  * 
  */
 router.get('/dashboard/users', auth, authorizeRole('admin'), getAllUsers);
+
+/** 
+ * @route    DELETE api/v1/dashboard/users/:userId
+ * @desc     Delete user profile by admin
+ * @access   Private
+ */
+router.delete('/dashboard/users/:userId', auth, authorizeRole('admin'), deleteUserProfileByAdmin);
+
+/**
+ * @route     PUT api/v1/dashboard/users/:userId  
+ * @desc      Update user profile by admin
+ * @access    Private
+ */
+router.put('/dashboard/users/:userId', auth, authorizeRole('admin'), upload.single('userImage'), updateUserProfileByAdmin);
+
+/**
+ * @route     GET api/v1/dashboard/users/:userId
+ * @desc      Get user profile by admin
+ * @access    Private
+ */
+router.get('/dashboard/users/:userId', auth, authorizeRole('admin'), getUserProfileByAdmin);
 
 module.exports = router;
