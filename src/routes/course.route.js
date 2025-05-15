@@ -203,6 +203,57 @@ router.get('/dashboard/registeredCourses', auth, courseController.getRegisteredC
  * @route    GET api/v1/dashboard/registeredUsers
  * @desc      GET all registered users for a course
  * @access    Private (admin only)
+ * @swagger
+ * /api/v1/dashboard/{courseId}/registeredUsers:
+ *  get:
+ *    summary: Get all registered users for a course
+ *   description: This endpoint allows an admin to fetch all users registered for a specific course.
+ *  parameters:
+ *   - in: path
+ *   name: courseId
+ *  required: true
+ * description: The ID of the course to fetch registered users for.
+ * schema:
+ *  type: string
+ * example: "1234567890abcdef12345678"
+ * tags: ["Courses"]
+ * responses:
+ *  200:
+ *   description: Successfully fetched all registered users for the course.
+ *  content:
+ *   application/json:
+ *    schema:
+ *   type: object
+ *  properties:
+ *   message:
+ *    type: string
+ *   example: "Successfully fetched all registered users for the course."
+ *  success:
+ *   type: boolean
+ *  example: true
+ * registeredUsers:
+ *  type: array
+ * items:
+ *  type: object
+ * properties:
+ * _id:
+ * type: string
+ * example: "1234567890abcdef12345678"
+ * firstName:
+ * type: string
+ * example: "John"
+ * lastName:
+ * type: string
+ * example: "Doe"
+ * email:
+ * type: string
+ * example: "example@gmail.com"
+ * userImage:
+ * type: string
+ * example: "https://example.com/user-image.jpg"
+ * role:
+ * type: string
+ * example: "user"
  */
 router.get('/dashboard/:courseId/registeredUsers', auth, authorizeRole('admin'), courseController.getRegisteredUsers);
 
@@ -389,6 +440,47 @@ router.post('/dashboard/:courseId/register', auth, courseController.registerForO
  * @route   DELETE api/v1/courses/:courseId
  * @desc    Delete a course
  * @access  Private (admin only)
+ * 
+ * @swagger
+ * /api/v1/courses/{courseId}:
+ *   delete:
+ *    summary: Delete a course
+ *  description: This endpoint allows an admin to delete a course.
+ *  parameters:
+ *   - in: path
+ *    name: courseId
+ *  required: true
+ * description: The ID of the course to delete.
+ * schema:
+ *   type: string
+ * example: "1234567890abcdef12345678"
+ * tags: ["Courses"]
+ * responses:
+ *  200:
+ *   description: Successfully deleted the course.
+ *  content:
+ *   application/json:
+ *    schema:
+ *    type: object
+ *   properties:
+ *   message:
+ *    type: string
+ *   example: "Successfully deleted the course."
+ *  success:
+ *   type: boolean
+ *  example: true
+ * course:
+ *  type: object
+ * properties:
+ *  _id:
+ *   type: string
+ * example: "1234567890abcdef12345678"
+ * courseTitle:
+ *  type: string
+ * example: "Graphic Design"
+ * courseImage:
+ * type: string
+ * example: "https://example.com/course-image.jpg"
  */
 router.delete('/:courseId', auth, authorizeRole('admin'), courseController.deleteCourse);
 
@@ -396,6 +488,46 @@ router.delete('/:courseId', auth, authorizeRole('admin'), courseController.delet
  * @route   PUT api/v1/courses/:courseId
  * @desc    Update a course
  * @access  Private (admin only)
+ * @swagger
+ * /api/v1/courses/{courseId}:
+ *   put:
+ *    summary: Update a course
+ *   description: This endpoint allows an admin to update a course.
+ *   parameters:
+ *    - in: path
+ *     name: courseId
+ *    required: true
+ *   description: The ID of the course to update.
+ *  schema:
+ *    type: string
+ *   example: "1234567890abcdef12345678"
+ *  tags: ["Courses"]
+ * responses:
+ *  200:
+ *   description: Successfully updated the course.
+ *  content:
+ *   application/json:
+ *    schema:
+ *     type: object
+ *    properties:
+ *    message:
+ *     type: string
+ *    example: "Successfully updated the course."
+ *   success:
+ *    type: boolean
+ *   example: true
+ *  course:
+ *   type: object
+ *  properties:
+ *   _id:
+ *    type: string
+ *   example: "1234567890abcdef12345678"
+ *  courseTitle:
+ *   type: string
+ *  example: "Graphic Design"
+ * courseImage:
+ *  type: string
+ * example: "https://example.com/course-image.jpg"
  */
 router.put('/:courseId', auth, authorizeRole('admin'), upload.single('courseImage'), courseController.updateCourse);
 
@@ -405,5 +537,79 @@ router.put('/:courseId', auth, authorizeRole('admin'), upload.single('courseImag
  * @access  Private
  */
 router.post('/dashboard/:courseId/unregister', auth, courseController.unregisterFromCourse);
+
+
+/**
+ * @route    POST api/v1/dashboard/metrics
+ * @desc      Get dashboard metrics
+ * @access    Private (admin only)
+ * @swagger
+ * /api/v1/dashboard/metrics:
+ *   get:
+ *     summary: Get dashboard metrics
+ *     description: This endpoint allows an admin to fetch dashboard metrics.
+ *     tags: ["Dashboard"]
+ *    responses:
+ *      200:
+ *        description: Successfully fetched dashboard metrics.
+ *       content:
+ *         application/json:
+ *          schema:
+ *           type: object
+ *          properties:
+ *           message:
+ *            type: string
+ *           example: "Successfully fetched dashboard metrics."
+ *          success:
+ *           type: boolean
+ *          example: true
+ *          metrics:
+ *           type: object
+ *          properties:
+ *           totalUsers:
+ *            type: number
+ *           example: 100
+ *          totalCourses:
+ *           type: number
+ *         example: 50
+ *         totalWorkshops:
+ *          type: number
+ *         example: 20
+ *         totalRegisteredUsers:
+ *          type: number
+ *        example: 80 
+ */
+router.get('/dashboard/metrics', auth, authorizeRole('admin'), courseController.getDashboardMetrics);
+/**
+ * @swagger
+ * /api/v1/dashboard/:courseId/unregister:
+ *  post:
+ *    summary: Unregister from a course
+ *    description: This endpoint allows a user to unregister from a course.
+ *    parameters:
+ *     - in: path
+ *       name: courseId
+ *       required: true
+ *       description: The ID of the course to unregister from.
+ *       schema:
+ *         type: string
+ *         example: "1234567890abcdef12345678"
+ *    tags: ["Courses"]
+ *    responses:
+ *      200:
+ *        description: Successfully unregistered from the course.
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                message:
+ *                  type: string
+ *                  example: "Successfully unregistered from the course."
+ *                success:
+ *                  type: boolean
+ *                  example: true
+ *
+ */
 
 module.exports = router;
