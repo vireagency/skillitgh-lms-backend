@@ -69,6 +69,14 @@ exports.signIn = async (req, res) => {
     // const userObject = existingUser.toObject();
     // delete userObject.password;
 
+    // set secure HTTP-only cookie
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "Strict",
+      maxAge: 24 * 60 * 60 * 1000 // 1 day
+    });
+
     res.status(200).json({ success: true, message: "User signed in successfully!", user: user, token: accessToken });
   } catch (err) {
     console.log("Error in signing in user: ", err);
@@ -80,7 +88,11 @@ exports.signIn = async (req, res) => {
 
 exports.signOut = async (req, res) => {
   try {
-    res.clearCookie("accessToken");
+    res.clearCookie("accessToken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "Strict",
+    });
     res.status(200).json({ success: true, message: "User signed out successfully!" });
   } catch (err) {
     console.log("Error in signing out user: ", err);
