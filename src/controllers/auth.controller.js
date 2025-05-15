@@ -73,7 +73,7 @@ exports.signIn = async (req, res) => {
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "Strict",
+      sameSite: "None",
       maxAge: 24 * 60 * 60 * 1000 // 1 day
     });
 
