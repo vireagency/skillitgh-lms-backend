@@ -1,6 +1,7 @@
 const Course = require('../models/course.model');
 const CourseRegistration = require('../models/course.registration');
 const User = require('../models/user.model');
+const Workshop = require('../models/workshop.model');
 const { sendMail } = require('../utils/email.transport');
 //const sendEmail = require('../utils/email.transport.js')
 
@@ -330,6 +331,72 @@ exports.unregisterFromCourse = async (req, res) => {
     res.status(200).json({ success: true, message: "Successfully unregistered from the course", registration: registration });
   } catch (error) {
     console.error("Error in unregistering from course:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+}
+
+// @desc      dashboard statistics
+exports.getDashboardMetrics = async (req, res) => {
+  try {
+    const [totalCourses, totalUsers, totalRegistrations, totalWorkshops] = await Promise.all([
+      Course.countDocuments(),
+      User.countDocuments(),
+      CourseRegistration.countDocuments(),
+      Workshop.countDocuments(),
+    ]);
+
+    const topCourses = await CourseRegistration.aggregate([
+      {
+        $group: {
+          _id: "$course",
+          registrationCount: { $sum: 1 }
+        }
+      },
+    {
+      $sort: { registrationCount: -1 },
+    },
+    {
+      $limit: 5
+    },
+    {
+      $lookup: {
+        from: "courses",
+        localField: "_id",
+        foreignField: "_id",
+        as: "courseDetails"
+      }
+    },
+    {
+      $unwind: "$course"
+    },
+    {
+      $project: {
+        _id: 0,
+        courseTitle: "$course.courseTitle",
+        registrationCount: 1
+      }
+    }
+    ]);
+
+    const userRoles = await User.aggregate([
+      {
+        $group: {
+          _id: "$role",
+          count: { $sum: 1 }
+        }
+      }
+    ]);
+
+    res.status(200).json({ success: true, message: "Successfully fetched dashboard metics", metrics: {
+      totalCourses,
+      totalUsers,
+      totalRegistrations,
+      totalWorkshops,
+      topCourses,
+      userRoles
+    } });
+  } catch (error) {
+    console.error("Error in fetching dashboard metrics:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 }
