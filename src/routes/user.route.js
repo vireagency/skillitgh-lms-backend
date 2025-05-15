@@ -9,6 +9,45 @@ const upload = require('../middlewares/multer.middleware');
  * @route    GET api/v1/dashboard/profile
  * @desc     Get user profile
  * @access   Private
+ * 
+ * @swagger
+ * /api/v1/dashboard/profile:
+ *  get:
+ *    summary: Get user profile
+ *   description: Get user profile
+ *  tags:
+ *    - Users
+ *   parameters:
+ *    - name: Authorization
+ *     in: header
+ *    required: true
+ *   description: Bearer token
+ *  responses:
+ *    200:
+ *     description: User profile
+ *    content:
+ *      application/json:
+ *       schema:
+ *        type: object
+ *       properties:
+ *        user:
+ *         type: object
+ *        properties:
+ *         firstName:
+ *          type: string
+ *         lastName:
+ *         type: string
+ *        email:
+ *         type: string
+ *        userImage:
+ *        type: string
+ * 
+ * example:
+ *  user:
+ *  firstName: John
+ * lastName: Doe
+ * email: example.com
+ * userImage: https://example.com/user-image.jpg
  */
 router.get('/dashboard/profile', auth, getUserProfile);
 
@@ -16,6 +55,68 @@ router.get('/dashboard/profile', auth, getUserProfile);
  * @route    PUT api/v1/dashboard/profile
  * @desc     Update user profile
  * @access   Private
+ * 
+ * @swagger
+ * /api/v1/dashboard/profile:
+ *  put:
+ *   summary: Update user profile
+ *  description: Update user profile
+ * tags:
+ *   - Users
+ * parameters:
+ *   - name: Authorization
+ *  in: header
+ * required: true
+ * description: Bearer token
+ * requestBody:
+ *  required: true
+ * content:
+ *  application/json:
+ *  schema:
+ *   type: object
+ *  properties:
+ *   firstName:
+ *    type: string
+ *  lastName:
+ *   type: string
+ *  email:
+ *   type: string
+ *  userImage
+ *  type: string
+ * example:
+ *  firstName: John
+ * lastName: Doe
+ * email: example.com
+ * userImage: https://example.com/user-image.jpg
+ * required:
+ * - firstName
+ * - lastName
+ * - email
+ * - userImage
+ * responses:
+ *  200:
+ *   description: User profile updated
+ *  content:
+ *   application/json:
+ *  schema:
+ *   type: object
+ *  properties:
+ *   user:
+ *    type: object
+ *  properties:
+ *   firstName:
+ *   type: string
+ *  lastName:
+ *  type: string
+ *  email:
+ *  type: string
+ * example:
+ *  firstName: John
+ *  lastName: Doe
+ *  email: example.com
+ * userImage:
+ * type: string
+ * example: https://example.com/user-image.jpg
  */
 router.put('/dashboard/profile', auth, upload.single('userImage'), updateUserProfile);
 
@@ -23,6 +124,34 @@ router.put('/dashboard/profile', auth, upload.single('userImage'), updateUserPro
  * @route    DELETE api/v1/dashboard/profile
  * @desc     Delete user profile
  * @access   Private
+ * 
+ * @swagger
+ * /api/v1/dashboard/profile:
+ * delete:
+ *  summary: Delete user profile
+ * description: Delete user profile
+ * tags:
+ * - Users
+ * parameters:
+ * - name: Authorization
+ * in: header
+ * required: true
+ * description: Bearer token
+ * responses:
+ *  200:
+ *  description: User profile deleted
+ * content:
+ * application/json:
+ * schema:
+ * type: object
+ * properties:
+ * message:
+ * type: string
+ * example: User profile deleted successfully
+ * success:
+ * type: boolean
+ * example: true
+ * 
  */
 router.delete('/dashboard/profile', auth, authorizeRole('admin'), deleteUserProfile)
 
@@ -30,6 +159,51 @@ router.delete('/dashboard/profile', auth, authorizeRole('admin'), deleteUserProf
  * @route    GET api/v1/dashboard/users
  * @desc     Get all users on the platform
  * @access   Private
+ * 
+ * @swagger
+ * /api/v1/dashboard/users:
+ * get:
+ *  summary: Get all users
+ * description: Get all users
+ * tags:
+ * - Users
+ * parameters:
+ * - name: Authorization
+ * in: header
+ * required: true
+ * description: Bearer token
+ * responses:
+ *  200:
+ *  description: All users
+ * content:
+ * application/json:
+ * schema:
+ * type: object
+ * properties:
+ * users:
+ * type: array
+ * items:
+ * type: object
+ * properties:
+ * firstName:
+ * type: string
+ * lastName:
+ * type: string
+ * email:
+ * type: string
+ * userImage:
+ * type: string
+ * role:
+ * type: string
+ * 
+ * example:
+ * users:
+ * - firstName: John
+ * lastName: Doe
+ * email: example.com
+ * userImage: https://example.com/user-image.jpg
+ * role: user
+ * 
  */
 router.get('/dashboard/users', auth, authorizeRole('admin'), getAllUsers);
 
