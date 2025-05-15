@@ -13,7 +13,8 @@ const {
    getWorkshopAttendees,
    unregisterFromWorkshop,
    updateWorkshop,
-   getRegisteredWorkshops
+   getRegisteredWorkshops,
+   getAllWorkshops
 } = require('../controllers/workshop.controller');
 
 const upload = require('../middlewares/multer.middleware');
@@ -268,7 +269,7 @@ router.get('/workshops/:workshopId', auth, getWorkshopById);
  * @swagger
  * /api/v1/workshops/{workshopId}/register:
  *   get:
- *     summary: Register for other courses
+ *     summary: Register for an upcoming workshop
  *     description: This endpoint allows a user to register for upcoming workshops.
  *     parameters:
  *       - in: path
@@ -362,6 +363,136 @@ router.post('/workshops/:workshopId/register', auth, registerForWorkshop);
  * @route     POST api/workshops/
  * @desc       Create a new workshop
  * @access     Private
+ * @swagger
+ * /api/v1/workshops:
+ *  post:
+ *    summary: Create a new workshop
+ *   description: This endpoint allows an admin to create a new workshop.
+ *    tags: ["Workshops"]
+ *   requestBody:
+ *     required: true
+ *    content:
+ *      multipart/form-data:
+ *       schema:
+ *        type: object
+ *       properties:
+ *         title:
+ *          type: string
+ *         example: "Time Management"
+ *        description:
+ *         type: string
+ *        example: "Learn how to manage your time effectively."
+ *        workshopImage:
+ *        type: string
+ *       format: binary
+ *      example: "https://example.com/image.jpg"
+ *       facilitator:
+ *        type: object
+ *       properties:
+ *        name:
+ *        type: string
+ *       example: "Naana Abena"
+ *       email:
+ *       type: string
+ *      example: "example@gmail.com"
+ *        date:
+ *       type: string
+ *      example: "2024-10-01T10:00:00Z"
+ *       duration:
+ *      type: string
+ *      example: "2 hours"
+ *       location:
+ *      type: string
+ *     example: "Adenta, Accra"
+ *      resource:
+ *      type: array
+ *     items:
+ *      type: string
+ *     format: binary
+ *    example: "https://example.com/resource.pdf"
+ *    responses:
+ *      201:
+ *       description: Successfully created a new workshop.
+ *      content:
+ *        application/json:
+ *         schema:
+ *          type: object
+ *         properties:
+ *          message:
+ *           type: string
+ *          example: "Workshop created successfully."
+ *         success:
+ *          type: boolean
+ *         example: true
+ *         workshop:
+ *         type: object
+ *        properties:
+ *         _id:
+ *          type: string
+ *         example: "1234567890abcdef12345678"
+ *        title:
+ *         type: string
+ *        example: "Time Management"
+ *        description:
+ *        type: string
+ *       example: "Learn how to manage your time effectively."
+ *       workshopImage: 
+ *       type: string
+ *      example: "https://example.com/image.jpg"
+ *       facilitator:
+ *      type: object
+ *      properties:
+ *       name:
+ *      type: string
+ *      example: "Naana Abena"
+ *      email:
+ *     type: string
+ *     example: "example.com"
+ *       date:
+ *      type: string
+ *     example: "2024-10-01T10:00:00Z"
+ *      duration:
+ *     type: string
+ *     example: "2 hours"
+ *      location:
+ *     type: string
+ *    example: "Adenta, Accra"
+ *     resource:
+ *    type: array
+ *   items:
+ *    type: string
+ *   example: "https://example.com/resource.pdf"
+ *      attendees:
+ *      type: array
+ *     items:
+ *     type: string
+ *    example: ["1234567890abcdef12345678", "1234567890abcdef12345679", "1234567890abcdef12345680"]
+ *      400:
+ *       description: Bad Request
+ *      content:
+ *       application/json:
+ *        schema:
+ *        type: object
+ *      properties:
+ *        message:
+ *        type: string
+ *       example: "Bad Request"
+ *       success:
+ *      type: boolean
+ *      example: false
+ *      401:
+ *      description: Unauthorized: Please Login.
+ *     content:
+ *      application/json:
+ *      schema:
+ *      type: object
+ *     properties:
+ *      message:
+ *      type: string
+ *     example: "Unauthorized: Please Login."
+ *     success:
+ *     type: boolean
+ *    example: false
  */
 
 router.post('/workshops/', auth, authorizeRole('admin'), upload.fields([
@@ -562,5 +693,83 @@ router.get('/workshops/registeredWorkshops', auth, authorizeRole('admin'), getRe
  *                   type: string
  *                   example: "Registered workshops retrieved successfully."
  */
+
+/**
+ * @route    GET api/workshops/all/type={type}&page={page}
+ * @desc     Get all workshops
+ * @access   Private
+ * 
+ * @swagger
+ * /api/v1/workshops/all:
+ *  get:
+ *   summary: Get all workshops
+ *  description: This endpoint retrieves a list of all workshops.
+ *  tags: [Workshops]
+ * parameters:
+ * - name: Authorization
+ *   in: header
+ *  required: true
+ * description: Bearer token
+ * responses:
+ *  200:
+ *   description: A list of all workshops
+ *  content:
+ *   application/json:
+ *    schema:
+ *   type: object
+ *  properties:
+ *   success:
+ *   type: boolean
+ *  example: true
+ *  message:
+ *  type: string
+ * example: "All workshops retrieved successfully."
+ *  data:
+ *  type: array
+ * items:
+ *  type: object
+ * properties:
+ *  _id:
+ *   type: string
+ *  example: "1234567890abcdef12345678"
+ * title:
+ *  type: string
+ * example: "Time Management"
+ * description:
+ * type: string
+ * example: "Learn how to manage your time effectively."
+ * workshopImage:
+ * type: string
+ * example: "https://example.com/image.jpg"
+ * facilitator:
+ * type: object
+ * properties:
+ * name:
+ * type: string
+ * example: "Naana Abena"
+ * email:
+ * type: string
+ * example: "example.com"
+ * date:
+ * type: string
+ * example: "2024-10-01T10:00:00Z"
+ * duration:
+ * type: string
+ * example: "2 hours"
+ * location:
+ * type: string
+ * example: "Adenta, Accra"
+ * resource:
+ * type: array
+ * items:
+ * type: string
+ * example: "https://example.com/resource.pdf"
+ * attendees:
+ * type: array
+ * items:
+ * type: string
+ * example: ["1234567890abcdef12345678", "1234567890abcdef12345679", "1234567890abcdef12345680"]
+ */
+router.get('/workshops/all', auth, getAllWorkshops);
 
 module.exports = router;
