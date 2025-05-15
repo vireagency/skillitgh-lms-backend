@@ -91,7 +91,7 @@ exports.signOut = async (req, res) => {
     res.clearCookie("accessToken", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "Strict",
+      sameSite: "None",
     });
     res.status(200).json({ success: true, message: "User signed out successfully!" });
   } catch (err) {
