@@ -81,7 +81,10 @@ exports.deleteUserProfile = async (req, res) => {
 
 exports.getAllUsers = async (req, res) => {
   try {
-    const users = await User.find();
+    const users = await User.find({ role: "user" });
+    if (!users) {
+      return res.status(404).json({ success: false, message: "No users found!" });
+    }
     if (!users) {
       return res.status(404).json({ success: false, message: "No users found!" });
     }
