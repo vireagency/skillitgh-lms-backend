@@ -612,4 +612,12 @@ router.get('/dashboard/metrics', auth, authorizeRole('admin'), courseController.
  *
  */
 
+/** 
+ * @route     GET api/v1/dashboard/registeredCourses
+ * @desc      Get all registered courses in the system
+ * @access    Private (admin only)
+ */
+
+router.get("/dashboard/registeredCourses", auth, courseController.getRegisteredCoursesByAdmin);
+
 module.exports = router;

@@ -400,3 +400,20 @@ exports.getDashboardMetrics = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 }
+
+exports.getRegisteredCoursesByAdmin = async (req, res) => {
+  try {
+    const { userId } = req.user;
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "Unauthorized: Please Login."})
+    }
+    const registrations = await CourseRegistration.find().populate('course enrolledUser');
+    if (!registrations || registrations.length === 0) {
+      return res.status(404).json({ success: false, message: "No registered course found!" });
+    }
+    res.status(200).json({ success: true, message: "Successfully fetched all registered courses", registrations: registrations });
+  } catch (error) {
+    console.error("Error in fetching registered courses:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+}
