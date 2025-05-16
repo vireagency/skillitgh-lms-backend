@@ -84,14 +84,14 @@ exports.registerForCourse = async (req, res) => {
     await sendMail(emailData);
 
     // // Send notification to user
-    // const notification = await Notification.create({
-    //   user: userId,
-    //   type: 'course',
-    //   message: `${ user.firstName } just registered for the ${ course.title } course.`,
-    // });
-    // if (!notification) {
-    //   return res.status(400).json({ success: false, message: "Notification not sent!" });
-    // }
+    const notification = await Notification.create({
+      user: userId,
+      type: 'course',
+      message: `${ user.firstName } just registered for the ${ course.title } course.`,
+    });
+    if (!notification) {
+      return res.status(400).json({ success: false, message: "Notification not sent!" });
+    }
 
 
     res.status(200).json({ success: true, message: "You have successfully enrolled in this course", registration: registration, user: user });
@@ -250,6 +250,16 @@ exports.registerForOtherCourses = async (req, res) => {
     }
 
     await sendMail(emailData);
+
+    // Send notification to user
+    const notification = await Notification.create({
+      user: userId,
+      type: 'course',
+      message: `${ user.firstName } just registered for the ${ course.title } course.`,
+    });
+    if (!notification) {
+      return res.status(400).json({ success: false, message: "Notification not sent!" });
+    }
     
     res.status(201).json({ success: true, message: "This course is successfully registered", registration: otherCourse, user: user });
 
