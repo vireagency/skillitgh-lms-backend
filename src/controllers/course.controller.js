@@ -255,13 +255,13 @@ exports.registerForOtherCourses = async (req, res) => {
     const notification = await Notification.create({
       user: userId,
       type: 'course',
-      message: `${ user.firstName } just registered for the ${ course.title } course.`,
+      message: `${ user.firstName } just registered for the ${ otherCourse.title } course.`,
     });
     if (!notification) {
       return res.status(400).json({ success: false, message: "Notification not sent!" });
     }
     
-    res.status(201).json({ success: true, message: "This course is successfully registered", registration: otherCourse, user: user });
+    res.status(201).json({ success: true, message: "This course is successfully registered", registration: otherCourse, user });
 
   } catch (error) {
     console.error("Error registering for another course:", error.message);
