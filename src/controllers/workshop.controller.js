@@ -319,7 +319,17 @@ exports.getRegisteredWorkshops = async(req, res) => {
     // if (!registeredWorkshops || registeredWorkshops.length === 0) {
     //   return res.status(404).json({ success: false, message: "No registered workshops found!" });
     // }
-    res.status(200).json({ success: true, message: "These are the registered workshops.", workshops: workshops });
+    //const workshopCount = workshops.reduce((acc, workshop) => acc + workshop.attendees.length, 0);
+    const workshopCount = await Workshop.countDocuments({ attendees: { $not: { $size: 0 } } });
+    const workshopAttendees = workshops.map(workshop => workshop.attendees.length);
+    const workshopAttendeeCount = workshopAttendees.reduce((acc, count) => acc + count, 0);
+    const workshopAttendeeSum = workshops.reduce((acc, count) => acc + count, 0);
+    const workshopDetails = workshops.map(workshop => ({
+      title: workshop.title,
+      attendees: workshop.attendees.length
+    })
+    );
+    res.status(200).json({ success: true, message: "These are the registered workshops.", workshops: workshops, workshopCount, workshopDetails, totalAttendees: workshopAttendeeCount, workshopAttendeeSum });
   } catch (error) {
     console.error("Error in getting all registered workshops:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
