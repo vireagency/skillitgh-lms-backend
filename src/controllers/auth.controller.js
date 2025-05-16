@@ -35,6 +35,17 @@ exports.register = async (req, res) => {
     const savedUser = await newUser.save();
     const userWithoutPassword = savedUser.toObject();
     delete userWithoutPassword.password; // remove password from user object
+
+    // Send notification to user
+    const notification = await Notification.create({
+      user: savedUser._id,
+      type: 'signup',
+      message: `${ savedUser.firstName } just registered on the platform!`,
+    });
+    if (!notification) {
+      return res.status(400).json({ success: false, message: "Notification not sent!" });
+    }
+
     res.status(201).json({ success: true, message: "User registered successfully!", user: userWithoutPassword });
   } catch (err) {
     console.error("Error in registering user: ", err);
