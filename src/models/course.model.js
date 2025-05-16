@@ -18,28 +18,32 @@ const courseSchema = new mongoose.Schema({
   },
   price: {
     type: String,
-    required: true,
+    //required: true,
     trim: true,
     default: "Free"
   },
   duration: {
     type: String,
-    required: true,
+    //required: true,
     trim: true,
     default: "8 weeks"
   },
   instructor: {
     name: {
       type: String,
-      required: true,
+      //required: true,
       trim: true
     },
     email: {
       type: String,
-      required: true,
+      //required: true,
       trim: true
     }
-  }
+  },
+  registeredUsers: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }]
 }, { timestamps: true });
 
 module.exports = mongoose.model('Course', courseSchema);
