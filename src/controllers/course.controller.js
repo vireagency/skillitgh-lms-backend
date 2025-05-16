@@ -85,7 +85,7 @@ exports.registerForCourse = async (req, res) => {
 
     // // Send notification to user
     const notification = await Notification.create({
-      user: userId,
+      userId: userId,
       type: 'course',
       message: `${ user.firstName } just registered for the ${ course.title } course.`,
     });
@@ -253,7 +253,7 @@ exports.registerForOtherCourses = async (req, res) => {
 
     // Send notification to user
     const notification = await Notification.create({
-      user: userId,
+      userId: userId,
       type: 'course',
       message: `${ user.firstName } just registered for the ${ otherCourse.title } course.`,
     });

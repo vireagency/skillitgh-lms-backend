@@ -39,7 +39,7 @@ exports.register = async (req, res) => {
 
     // Send notification to user
     const notification = await Notification.create({
-      user: savedUser._id,
+      userId: savedUser._id,
       type: 'signup',
       message: `${ savedUser.firstName } just registered on the platform!`,
     });

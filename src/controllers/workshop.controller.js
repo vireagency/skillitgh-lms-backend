@@ -202,7 +202,7 @@ exports.registerForWorkshop = async (req, res) => {
 
     // Send notification to user
     const notification = await Notification.create({
-      user: userId,
+      userId: userId,
       type: 'workshop',
       message: `${ user.firstName } just registered for the ${ workshop.title } workshop.`,
     });
