@@ -199,6 +199,16 @@ exports.registerForWorkshop = async (req, res) => {
     const text = `You have successfully registered for the workshop: ${workshop.title}. \n\nDetails:\nTitle: ${workshop.title}\nDate: ${workshop.date}\nDuration: ${workshop.duration}\nLocation: ${workshop.location}\nPrice: ${workshop.price}`;
     await sendMail({ email, subject, text });
 
+    // Send notification to user
+    const notification = await Notification.create({
+      user: userId,
+      type: 'workshop',
+      message: `${ user.firstName } just registered for the ${ workshop.title } workshop.`,
+    });
+    if (!notification) {
+      return res.status(400).json({ success: false, message: "Notification not sent!" });
+    }
+
     res.status(200).json({ success: true, message: "Successfully registered for the workshop!", registration: {...workshop.toObject(), isRegistered } });
 
   } catch (error) {
