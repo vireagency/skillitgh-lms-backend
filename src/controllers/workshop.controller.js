@@ -329,15 +329,11 @@ exports.getRegisteredWorkshops = async(req, res) => {
 exports.getMyWorkshops = async (req, res) => {
   try {
     const { userId } = req.user;
-    const workshops = await User.findById(userId).populate('workshops', 'title description date duration location price workshopImage facilitator resource');
-    if (!workshops || workshops.length === 0) {
+    const user = await User.findById(userId).populate('workshops', 'title description date duration location price workshopImage facilitator resource');
+    if (!user.workshops || user.workshops.length === 0) {
       return res.status(404).json({ success: false, message: "No workshops found!" });
     }
-    const foundWorkshops = workshops.map(workshop => workshop.workshops);
-    if (!foundWorkshops || foundWorkshops.length === 0) {
-      return res.status(404).json({ success: false, message: "No workshops found!" });
-    }
-    res.status(200).json({ success: true, message: "These are your workshops.", workshops: foundWorkshops });
+    res.status(200).json({ success: true, message: "These are your workshops.", workshops: user.workshops });
   } catch (error) {
     console.error("Error fetching my workshops:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
