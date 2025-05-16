@@ -1,6 +1,7 @@
 const Workshop = require('../models/workshop.model');
 const User = require('../models/user.model');
 const { sendMail } = require('../utils/email.transport');
+const Notification = require('../models/notification');
 
 exports.getUpcomingWorkshops = async (req, res) => {
   try {
