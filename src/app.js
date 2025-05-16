@@ -35,15 +35,19 @@ app.use(rateLimit({
   message: "Too many requests from this IP, please try again later."
 })); // Limit requests to 100 per 15 minutes
 
-app.use(cors({
-  origin: [
-    process.env.client_URL,
-    process.env.client_URL_PROD1, // Add your production client URL in .env as PROD_CLIENT_URL
-    process.env.client_URL_PROD2,
-    "https://skillitgh-lms-frontend-git-main-king1081s-projects.vercel.app",
-    "https://skillitgh-lms-frontend-385b239si-king1081s-projects.vercel.app"
-  ],
-  credentials: true,
+// app.use(cors({
+//   origin: [
+//     process.env.client_URL,
+//     process.env.client_URL_PROD1,
+//     process.env.client_URL_PROD2,
+//     "https://skillitgh-lms-frontend-git-main-king1081s-projects.vercel.app",
+//     "https://skillitgh-lms-frontend-385b239si-king1081s-projects.vercel.app"
+//   ],
+//   credentials: true,
+// }));
+app.use(cors({ 
+  origin: '*', // Allow all origins for development
+  credentials: true, // Allow credentials
 }));
 app.use(express.json());
 app.use(morgan('dev'));
