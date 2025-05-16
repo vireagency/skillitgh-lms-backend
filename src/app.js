@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const cors = require('cors');
+//const cors = require('cors');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
 const authRoutes = require("./routes/auth.route");
@@ -45,10 +45,10 @@ app.use(rateLimit({
 //   ],
 //   credentials: true,
 // }));
-app.use(cors({ 
-  origin: '*', // Allow all origins for development
-  credentials: true, // Allow credentials
-}));
+// app.use(cors({ 
+//   origin: '*',
+//   credentials: true,
+// }));
 app.use(express.json());
 app.use(morgan('dev'));
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
