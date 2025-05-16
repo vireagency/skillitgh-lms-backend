@@ -10,7 +10,7 @@ exports.getAllNotifications = async (req, res) => {
     //const notifications = await Notification.find({ userId }).sort({ createdAt: -1 });
   
 
-    const notifications = await Notification.find().populate('userId', 'firstName lastName email').sort({ createdAt: -1 });
+    const notifications = await Notification.find({ userId }).sort({ createdAt: -1 });
     if (!notifications) {
       return res.status(404).json({ success: false, message: "No notifications found!" });
     }
