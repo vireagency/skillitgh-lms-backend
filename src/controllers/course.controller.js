@@ -422,6 +422,19 @@ exports.getRegisteredCoursesByAdmin = async (req, res) => {
     if (!registrations || registrations.length === 0) {
       return res.status(404).json({ success: false, message: "No registered course found!" });
     }
+
+    const registeredUsers = registrations.map(reg => reg.enrolledUser);
+    const userCount = registeredUsers.length;
+    const courseCount = registrations.reduce((acc, reg) => {
+      if (!acc[reg.course._id]) {
+        acc[reg.course._id] = 1;
+      } else {
+        acc[reg.course._id]++;
+      }
+      return acc;
+    }, {});
+    
+
     res.status(200).json({ success: true, message: "Successfully fetched all registered courses", registrations: registrations });
   } catch (error) {
     console.error("Error in fetching registered courses:", error);
