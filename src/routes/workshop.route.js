@@ -14,7 +14,8 @@ const {
    unregisterFromWorkshop,
    updateWorkshop,
    getRegisteredWorkshops,
-   getAllWorkshops
+   getAllWorkshops,
+   getMyWorkshops
 } = require('../controllers/workshop.controller');
 
 const upload = require('../middlewares/multer.middleware');
@@ -257,6 +258,13 @@ router.get('/workshops/upcoming', auth,  getUpcomingWorkshops);
  * @access     Public
  */
 router.get('/workshops/previous', auth, getPreviousWorkshops);
+
+/**
+ * @route    GET api/workshops/registeredWorkshops
+ * @desc     Get all registered workshops
+ * @access   Private
+ */
+router.get('/workshops/registeredWorkshops', auth, authorizeRole('admin'), getRegisteredWorkshops);
 
 /**
  *  @route     GET api/workshops/:workshopId
@@ -665,12 +673,7 @@ router.post('/workshops/:workshopId/unregister', auth, unregisterFromWorkshop);
  *                   type: string
  *                   example: "Successfully unregistered from the workshop."
  */
-/**
- * @route    GET api/workshops/registeredWorkshops
- * @desc     Get all registered workshops
- * @access   Private
- */
-router.get('/workshops/registeredWorkshops', auth, authorizeRole('admin'), getRegisteredWorkshops);
+
 /**
  * @swagger
  * /api/v1/workshops/registeredWorkshops:
@@ -770,6 +773,8 @@ router.get('/workshops/registeredWorkshops', auth, authorizeRole('admin'), getRe
  * type: string
  * example: ["1234567890abcdef12345678", "1234567890abcdef12345679", "1234567890abcdef12345680"]
  */
-router.get('/workshops/all', auth, getAllWorkshops);
+router.get('/workshops/all/getWorkshops', auth, getAllWorkshops);
+
+router.get('/workshops/me/myWorkshops', auth, getMyWorkshops);
 
 module.exports = router;
