@@ -433,7 +433,7 @@ exports.getRegisteredCoursesByAdmin = async (req, res) => {
       }
       return acc;
     }, {});
-    
+
 
     res.status(200).json({ success: true, message: "Successfully fetched all registered courses", registrations: registrations });
   } catch (error) {
@@ -448,11 +448,14 @@ exports.getRegisteredUsersByAdmin = async (req, res) => {
     if (!courses || courses.length === 0) {
       return res.status(404).json({ success: false, message: "No registered users found!" });
     }
-    // const totalUsers = courses.reduce((acc, course) => acc + course.registeredUsers.length, 0);
-    const totalCount = await Course.countDocuments({ registeredUsers: { $exists: true, $not: { $size: 0}}});
-    const usersCount = courses.map(course => course.registeredUsers.length);
+    const totalStudents = courses.reduce((acc, course) => acc + course.registeredUsers.length, 0);
+    const courseCount = await Course.countDocuments({ registeredUsers: { $exists: true, $not: { $size: 0}}});
+    const courseDetails = courses.map(course => ({
+      courseTitle: course.title,
+      studentCount: course.registeredUsers.length
+    }));
 
-    res.status(200).json({ success: true, message: "Successfully fetched all registered users", course: courses, studentCount: usersCount, totalCount: totalCount });
+    res.status(200).json({ success: true, message: "Successfully fetched all registered users", course: courses, courseDetails,courseCount, totalCount, totalStudents });
   } catch (error) {
     console.error("Error in fetching users for a course:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
