@@ -1,6 +1,7 @@
 const User = require('../models/user.model');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const Notification = require('../models/notification.model');
 
 // @desc    Register a new user
 exports.register = async (req, res) => {
@@ -35,6 +36,17 @@ exports.register = async (req, res) => {
     const savedUser = await newUser.save();
     const userWithoutPassword = savedUser.toObject();
     delete userWithoutPassword.password; // remove password from user object
+
+    // Send notification to user
+    const notification = await Notification.create({
+      userId: savedUser._id,
+      type: 'signup',
+      message: `${ savedUser.firstName } just registered on the platform!`,
+    });
+    if (!notification) {
+      return res.status(400).json({ success: false, message: "Notification not sent!" });
+    }
+
     res.status(201).json({ success: true, message: "User registered successfully!", user: userWithoutPassword });
   } catch (err) {
     console.error("Error in registering user: ", err);
@@ -69,9 +81,33 @@ exports.signIn = async (req, res) => {
     // const userObject = existingUser.toObject();
     // delete userObject.password;
 
-    res.status(200).json({ success: true, message: "User signed in successfully!", user: user, token: accessToken });
+    // set secure HTTP-only cookie
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "None",
+      maxAge: 24 * 60 * 60 * 1000 // 1 day
+    });
+
+    res.status(200).json({ success: true, message: "User signed in successfully!", user, token: accessToken });
   } catch (err) {
     console.log("Error in signing in user: ", err);
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 } 
+
+// @desc    sign out user
+
+exports.signOut = async (req, res) => {
+  try {
+    res.clearCookie("accessToken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "None",
+    });
+    res.status(200).json({ success: true, message: "User signed out successfully!" });
+  } catch (err) {
+    console.log("Error in signing out user: ", err);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+}

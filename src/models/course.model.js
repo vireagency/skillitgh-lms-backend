@@ -25,8 +25,27 @@ const courseSchema = new mongoose.Schema({
   duration: {
     type: String,
     required: true,
-    trim: true
+    trim: true,
+    default: "8 weeks"
   },
+  instructor: {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+      default: "John Doe"
+    },
+    email: {
+      type: String,
+      required: true,
+      trim: true,
+      default: "example@com"
+    }
+  },
+  registeredUsers: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }]
 }, { timestamps: true });
 
 module.exports = mongoose.model('Course', courseSchema);
