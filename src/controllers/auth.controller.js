@@ -1,7 +1,7 @@
 const User = require('../models/user.model');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const Notification = require('../models/notification');
+const Notification = require('../models/notification.model');
 
 // @desc    Register a new user
 exports.register = async (req, res) => {
@@ -89,7 +89,7 @@ exports.signIn = async (req, res) => {
       maxAge: 24 * 60 * 60 * 1000 // 1 day
     });
 
-    res.status(200).json({ success: true, message: "User signed in successfully!", user: user, token: accessToken });
+    res.status(200).json({ success: true, message: "User signed in successfully!", user, token: accessToken });
   } catch (err) {
     console.log("Error in signing in user: ", err);
     res.status(500).json({ success: false, message: "Internal Server Error" });
