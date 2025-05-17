@@ -13,6 +13,7 @@ const userRoutes = require("./routes/user.route");
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const xss = require('xss-clean');
+const notificationRoutes = require("./routes/notification.route");
 //const hpp = require('hpp');
 //const compression = require('compression');
 //const mongoSanitize = require('express-mongo-sanitize');
@@ -58,6 +59,6 @@ app.get('/', (req, res) => {
 })
 
 // Routes
-app.use("/api/v1/", authRoutes, workshopRoutes, courseRoutes, userRoutes);
+app.use("/api/v1/", authRoutes, workshopRoutes, courseRoutes, userRoutes, notificationRoutes);
 
 module.exports = app;
