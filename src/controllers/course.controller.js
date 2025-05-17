@@ -468,7 +468,7 @@ exports.getRegisteredUsersByAdmin = async (req, res) => {
       studentCount: course.registeredUsers.length
     }));
 
-    res.status(200).json({ success: true, message: "Successfully fetched all registered users", courses, courseDetails,courseCount, totalCount, totalStudents });
+    res.status(200).json({ success: true, message: "Successfully fetched all registered users", courses, courseDetails,courseCount, totalStudents });
   } catch (error) {
     console.error("Error in fetching users for a course:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
