@@ -116,7 +116,7 @@ exports.updateUserProfileByAdmin = async (req, res) => {
   try {
     const { userId } = req.params;
     if (!userId) {
-      return res.status(401).json({ success: false, messsage: "Unathorized: Please Login." });
+      return res.status(401).json({ success: false, message: "Unauthorized: Please Login." });
     }
     const { firstName, lastName, email, gender, location, phoneNumber } = req.body;
     const userImage = req.file?.path;
