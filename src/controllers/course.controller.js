@@ -258,7 +258,7 @@ exports.registerForOtherCourses = async (req, res) => {
     const notification = await Notification.create({
       userId,
       type: 'course',
-      message: `${ user.firstName } just registered for the ${ otherCourse.title } course.`,
+      message: `${ user.firstName } just registered for the ${ existingCourse.title } course.`,
     });
     if (!notification) {
       return res.status(400).json({ success: false, message: "Notification not sent!" });
@@ -457,7 +457,7 @@ exports.getRegisteredCoursesByAdmin = async (req, res) => {
 
 exports.getRegisteredUsersByAdmin = async (req, res) => {
   try {
-    const courses = await Course.find({ registeredUsers: { $exists: true, $ne: [] } }).populate('registeredUsers');
+    const courses = await Course.find({ registeredUsers: { $exists: true, $ne: [] } }).populate('registeredUsers', 'firstName, lastName email userImage');
     if (!courses || courses.length === 0) {
       return res.status(404).json({ success: false, message: "No registered users found!" });
     }
