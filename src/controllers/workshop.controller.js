@@ -316,7 +316,7 @@ exports.unregisterFromWorkshop = async (req, res) => {
 
   } catch (error) {
     console.error("Error unregistering from workshop:", error);
-    res.status(500).json({ success: false, messasge: "Internal Server Error" });
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 }
 
