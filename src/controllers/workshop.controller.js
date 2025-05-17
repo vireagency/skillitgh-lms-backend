@@ -1,7 +1,7 @@
 const Workshop = require('../models/workshop.model');
 const User = require('../models/user.model');
 const { sendMail } = require('../utils/email.transport');
-const Notification = require('../models/notification');
+const Notification = require('../models/notification.model');
 
 exports.getUpcomingWorkshops = async (req, res) => {
   try {
@@ -86,7 +86,7 @@ exports.getWorkshopById = async (req, res) => {
     if (!workshop) {
       return res.status(404).json({ success: false, message: "Workshop not found!" });
     }
-    res.status(200).json({ success: true, message: "Workshop details fetched successfully.", workshop: workshop });
+    res.status(200).json({ success: true, message: "Workshop details fetched successfully.", workshop });
   } catch (error) {
     console.error("Error fetching workshop by ID:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
@@ -202,7 +202,7 @@ exports.registerForWorkshop = async (req, res) => {
 
     // Send notification to user
     const notification = await Notification.create({
-      userId: userId,
+      userId,
       type: 'workshop',
       message: `${ user.firstName } just registered for the ${ workshop.title } workshop.`,
     });
@@ -332,15 +332,15 @@ exports.getRegisteredWorkshops = async(req, res) => {
     // }
     //const workshopCount = workshops.reduce((acc, workshop) => acc + workshop.attendees.length, 0);
     const workshopCount = await Workshop.countDocuments({ attendees: { $not: { $size: 0 } } });
-    const workshopAttendees = workshops.map(workshop => workshop.attendees.length);
-    const workshopAttendeeCount = workshopAttendees.reduce((acc, count) => acc + count, 0);
-    const workshopAttendeeSum = workshops.reduce((acc, count) => acc + count, 0);
+    // const workshopAttendees = workshops.map(workshop => workshop.attendees.length);
+    // const workshopAttendeeCount = workshopAttendees.reduce((acc, count) => acc + count, 0);
+    const workshopAttendeeSum = workshops.reduce((acc, workshop) => acc + workshop.attendees.length , 0);
     const workshopDetails = workshops.map(workshop => ({
       title: workshop.title,
       attendees: workshop.attendees.length
     })
     );
-    res.status(200).json({ success: true, message: "These are the registered workshops.", workshops: workshops, workshopCount, workshopDetails, totalAttendees: workshopAttendeeCount, workshopAttendeeSum });
+    res.status(200).json({ success: true, message: "These are the registered workshops.", workshops, workshopCount, workshopDetails, totalAttendees: workshopAttendeeSum });
   } catch (error) {
     console.error("Error in getting all registered workshops:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
@@ -398,7 +398,7 @@ exports.getAllWorkshops = async (req, res) => {
       hasPrevPage: page > 1,
       nextPage: page + 1,
       prevPage: page - 1 > 0 ? page - 1 : null,
-      workshops: workshops
+      workshops
     });
 
   } catch (error) {
