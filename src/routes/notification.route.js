@@ -6,7 +6,8 @@ const {
   deleteNotification
 } = require('../controllers/notification.controller');
 
-const { auth, authorizeRole } = require('../middlewares/auth.middleware');
+const { auth } = require('../middlewares/auth.middleware');
+const { authorizeRole } = require('../middlewares/role.middleware');
 
 router.get('/dashboard/notifications', auth, authorizeRole('admin'), getAllNotifications);
 
