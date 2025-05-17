@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authController = require("../controllers/auth.controller");
+const { auth } = require('../middlewares/auth.middleware');
 
 /**
  * @swagger
@@ -223,5 +224,11 @@ router.post('/auth/signout', authController.signOut);
  *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
  *
 */
+
+router.post('/auth/reset-password', authController.resetPassword);
+
+router.post('/auth/forgot-password', authController.forgotPassword);
+
+router.put('/auth/change-password', auth, authController.changePassword);
 
 module.exports = router; 
