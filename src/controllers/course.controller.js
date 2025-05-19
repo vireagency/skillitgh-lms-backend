@@ -457,7 +457,7 @@ exports.getRegisteredCoursesByAdmin = async (req, res) => {
 
 exports.getRegisteredUsersByAdmin = async (req, res) => {
   try {
-    const courses = await Course.find({ registeredUsers: { $exists: true, $ne: [] } }).populate('registeredUsers', 'firstName, lastName email userImage');
+    const courses = await Course.find({ registeredUsers: { $exists: true, $ne: [] } }).populate('registeredUsers', 'firstName lastName email userImage');
     if (!courses || courses.length === 0) {
       return res.status(404).json({ success: false, message: "No registered users found!" });
     }
