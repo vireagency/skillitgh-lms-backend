@@ -11,8 +11,8 @@ const { authorizeRole } = require('../middlewares/role.middleware');
 
 router.get('/dashboard/notifications', auth, authorizeRole('admin'), getAllNotifications);
 
-router.put('/dashboard/notifications/:id', auth, authorizeRole('admin'), markNotificationAsRead);
+router.put('/dashboard/notifications/:notificationId', auth, authorizeRole('admin'), markNotificationAsRead);
 
-router.delete('/dashboard/notifications/:id', auth, authorizeRole('admin'), deleteNotification);
+router.delete('/dashboard/notifications/:notificationId', auth, authorizeRole('admin'), deleteNotification);
 
 module.exports = router;
