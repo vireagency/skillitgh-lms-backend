@@ -18,7 +18,7 @@ const {
    getMyWorkshops
 } = require('../controllers/workshop.controller');
 
-const upload = require('../middlewares/multer.middleware');
+const { upload, uploadFile } = require('../middlewares/multer.middleware');
 
 /**
  * @swagger
@@ -503,11 +503,12 @@ router.post('/workshops/:workshopId/register', auth, registerForWorkshop);
  *    example: false
  */
 
-router.post('/workshops/', auth, authorizeRole('admin'), upload.fields([
-   { name: 'workshopImage', maxCount: 1 },
-   { name: 'resource', maxCount: 5 } 
-]), createWorkshop);
+// router.post('/workshops/create', auth, authorizeRole('admin'), upload.fields([
+//    { name: 'workshopImage', maxCount: 1 },
+//    { name: 'resource', maxCount: 5 } 
+// ]), createWorkshop);
 
+router.post('/workshops/create', auth, authorizeRole('admin'),uploadFile, createWorkshop);
 
 router.patch('/workshops/:workshopId', auth, authorizeRole('admin'), upload.array('resource', 5), updateWorkshopResources);
 /**
@@ -595,7 +596,7 @@ router.delete('/workshops/:workshopId', auth, authorizeRole('admin'), deleteWork
  * @desc    Update a workshop
  * @access  Private
  */   
-router.patch('/workshops/:workshopId', auth, authorizeRole('admin'), upload.fields([
+router.put('/workshops/:workshopId', auth, authorizeRole('admin'), upload.fields([
    { name: 'workshopImage', maxCount: 1 },
    { name: 'resource', maxCount: 5 }
 ]), updateWorkshop);

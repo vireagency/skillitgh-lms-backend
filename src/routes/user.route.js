@@ -11,7 +11,7 @@ const {
 } = require('../controllers/user.controller');
 const { auth } = require('../middlewares/auth.middleware');
 const { authorizeRole } = require('../middlewares/role.middleware');
-const upload = require('../middlewares/multer.middleware');
+const { upload } = require('../middlewares/multer.middleware');
 
 /**
  * @route    GET api/v1/dashboard/profile
