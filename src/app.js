@@ -11,6 +11,7 @@ const swaggerDocs = require("../config/swagger");
 const swaggerUi = require('swagger-ui-express');
 const userRoutes = require("./routes/user.route");
 const helmet = require('helmet');
+app.set('trust proxy', 1);
 const rateLimit = require('express-rate-limit');
 const xss = require('xss-clean');
 const notificationRoutes = require("./routes/notification.route");
@@ -33,7 +34,9 @@ app.use(helmet()); // Set security HTTP headers
 app.use(rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // Limit each IP to 100 requests per windowMs
-  message: "Too many requests from this IP, please try again later."
+  message: "Too many requests from this IP, please try again later.",
+  standardHeaders: true, // Return rate limit info in headers
+  legacyHeaders: false,  // Disable `X-RateLimit-*` headers
 })); // Limit requests to 100 per 15 minutes
 
 app.use(cors({
