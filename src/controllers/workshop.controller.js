@@ -96,8 +96,11 @@ exports.getWorkshopById = async (req, res) => {
 exports.createWorkshop = async (req, res) => {
   try {
     const { title, description, date, duration, location, price } = req.body;
-    const workshopImage = req.files?.workshopImage?.[0]?.path;
-    const resource = req.files?.resource?.map(file => file.path);
+    // const workshopImage = req.files?.workshopImage?.[0]?.path;
+    // const resource = req.files?.resource?.map(file => file.path);
+    const workshopImage = req.file?.path;
+    console.log("Received body:", req.body);
+    console.log("Received files:", req.file);
 
     console.log("Workshop Image and Resource:", req.files);
 
@@ -121,7 +124,7 @@ exports.createWorkshop = async (req, res) => {
       return res.status(400).json({ success: false, message: "Workshop date must be in the future!" });
     }
 
-    const newWorkshop = new Workshop({ title, description, date, duration, facilitator, location, resource, workshopImage, price });
+    const newWorkshop = new Workshop({ title, description, workshopImage, date, duration, facilitator, price, location });
 
     // if (req.files && req.files.length > 0) {
     //   newWorkshop.resource = req.files.map(file => file.path);
@@ -131,7 +134,8 @@ exports.createWorkshop = async (req, res) => {
     await newWorkshop.save();
     res.status(201).json({ success: true, message: "Workshop created successfully.", workshop: newWorkshop });
   } catch (error) {
-    console.error("Error creating workshop:", error);
+    console.error("Error creating workshop:", error.message || error);
+    console.error(error.stack);
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 }
