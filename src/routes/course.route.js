@@ -482,7 +482,7 @@ router.post('/dashboard/:courseId/register', auth, courseController.registerForO
  * type: string
  * example: "https://example.com/course-image.jpg"
  */
-router.delete('/:courseId', auth, authorizeRole('admin'), courseController.deleteCourse);
+router.delete('courses/:courseId', auth, authorizeRole('admin'), courseController.deleteCourse);
 
 /**
  * @route   PUT api/v1/courses/:courseId
