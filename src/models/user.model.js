@@ -37,6 +37,7 @@ const userSchema = new mongoose.Schema({
   },
   gender: {
     type: String,
+    enum: ['Male', 'Female', 'gender not specified'],
     default: "gender not specified"
   },
   location: {
