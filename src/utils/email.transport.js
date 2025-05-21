@@ -16,13 +16,20 @@ exports.sendMail = async ({ email, subject, text }) => {
       },
     });
 
-    await transporter.verify((error, success) => {
-      if (error) {
-        console.error("Error verifying SMTP connection:", error);
-        throw new Error("SMTP connection verification failed");
-      }
+    // await transporter.verify((error, success) => {
+    //   if (error) {
+    //     console.error("Error verifying SMTP connection:", error);
+    //     throw new Error("SMTP connection verification failed");
+    //   }
+    //   console.log("SMTP connection verified successfully");
+    // });
+     try {
+      await transporter.verify();
       console.log("SMTP connection verified successfully");
-    });
+    } catch (error) {
+      console.error("Error verifying SMTP connection:", error);
+      throw new Error("SMTP connection verification failed");
+    }
     // Set up email data
     const mailOptions = {
       from: `"${process.env.SMTP_FROM_NAME}" <${process.env.SMTP_FROM_EMAIL}>`, // sender address
