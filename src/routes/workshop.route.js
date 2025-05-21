@@ -18,7 +18,7 @@ const {
    getMyWorkshops
 } = require('../controllers/workshop.controller');
 
-const { upload, uploadFile } = require('../middlewares/multer.middleware');
+const { upload } = require('../middlewares/multer.middleware');
 
 /**
  * @swagger
@@ -508,7 +508,7 @@ router.post('/workshops/:workshopId/register', auth, registerForWorkshop);
 //    { name: 'resource', maxCount: 5 } 
 // ]), createWorkshop);
 
-router.post('/workshops/create', auth, authorizeRole('admin'),uploadFile, createWorkshop);
+router.post('/workshops/create', auth, authorizeRole('admin'),upload.single('workshopImage'), createWorkshop);
 
 router.patch('/workshops/:workshopId', auth, authorizeRole('admin'), upload.array('resource', 5), updateWorkshopResources);
 /**
