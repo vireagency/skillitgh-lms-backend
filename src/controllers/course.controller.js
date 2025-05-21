@@ -160,6 +160,14 @@ exports.createCourse = async (req, res) => {
   try {
     const { title, description, duration, price } = req.body;
     const courseImage = req.file?.path ;
+
+    let instructor;
+    try {
+      instructor = JSON.parse(req.body.instructor);
+    } catch (error) {
+      return res.status(400).json({ success: false, message: "Invalid instructor data!" });
+    }
+
     if (!title || !duration ) {
       return res.status(400).json({ success: false, message: "course title and duration are required!" });
     }
@@ -172,7 +180,8 @@ exports.createCourse = async (req, res) => {
       description, 
       courseImage,
       duration,
-      price
+      price,
+      instructor
     });
     
     if (!course) {
@@ -293,12 +302,20 @@ exports.updateCourse = async (req, res) => {
     //   course.courseImage = courseImage;
     // }
 
+    let instructor;
+    try {
+      instructor = JSON.parse(req.body.instructor);
+    } catch (error) {
+      return res.status(400).json({ success: false, message: "Invalid facilitator data!" });
+    }
+
     const course = await Course.findByIdAndUpdate(courseId, {
       title,
       description,
       duration,
       price,
-      courseImage
+      courseImage,
+      instructor
     }, { new: true, runValidators: true });
 
     if (!course) {
