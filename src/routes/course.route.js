@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const courseController = require('../controllers/course.controller');
-const { upload } = require('../middlewares/multer.middleware');
+const { upload, uploadFile } = require('../middlewares/multer.middleware');
 
 const { auth } = require('../middlewares/auth.middleware');
 const { authorizeRole } = require('../middlewares/role.middleware');
@@ -482,7 +482,7 @@ router.post('/dashboard/:courseId/register', auth, courseController.registerForO
  * type: string
  * example: "https://example.com/course-image.jpg"
  */
-router.delete('courses/:courseId', auth, authorizeRole('admin'), courseController.deleteCourse);
+router.delete('/courses/:courseId', auth, authorizeRole('admin'), courseController.deleteCourse);
 
 /**
  * @route   PUT api/v1/courses/:courseId
@@ -529,7 +529,7 @@ router.delete('courses/:courseId', auth, authorizeRole('admin'), courseControlle
  *  type: string
  * example: "https://example.com/course-image.jpg"
  */
-router.put('/:courseId', auth, authorizeRole('admin'), upload.single('courseImage'), courseController.updateCourse);
+router.put('/courses/:courseId', auth, authorizeRole('admin'), upload.single('courseImage'), courseController.updateCourse);
 
 /**
  * @route   POST api/v1/dashboard/:courseId/unregister
