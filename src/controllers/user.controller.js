@@ -10,7 +10,7 @@ exports.getUserProfile = async (req, res) => {
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found!" });
     }
-    res.status(200).json({ success: true, message: "User profile fetched successfully.", user: user });
+    res.status(200).json({ success: true, message: "User profile fetched successfully.", user });
   } catch (error) {
     console.error("Error fetching user profile:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
@@ -63,8 +63,8 @@ exports.updateUserProfile = async (req, res) => {
 } 
 
 exports.deleteUserProfile = async (req, res) => {
-  try {
-    const { userId } = req.user;
+  try {   
+   const { userId } = req.user;
     if (!userId) {
       return res.status(401).json({ success: false, message: "Unauthorized: Please Login." });
     }
@@ -81,14 +81,29 @@ exports.deleteUserProfile = async (req, res) => {
 
 exports.getAllUsers = async (req, res) => {
   try {
-    const users = await User.find({ role: "user" });
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const total = await User.countDocuments({ role: "user" });
+    const users = await User.find({ role: "user" })
+    .skip(skip)
+    .limit(limit)
+    .sort({ createdAt: -1 });
+    
     if (!users) {
       return res.status(404).json({ success: false, message: "No users found!" });
     }
-    if (!users) {
-      return res.status(404).json({ success: false, message: "No users found!" });
-    }
-    res.status(200).json({ success: true, message: "Users fetched successfully!", users: users });
+    res.status(200).json({ success: true, message: "Users fetched successfully!",
+      currentPage: page,
+      totalPages: Math.ceil(total / limit),
+      totalUsers: total,
+      hasNextPage: page * limit < total,
+      hasPrevPage: page > 1,
+      nextPage: page + 1,
+      prevPage: page - 1 > 0 ? page - 1 : null,
+      users
+    });
   } catch (error) {
     console.error("Error fetching all users:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
@@ -153,7 +168,7 @@ exports.getUserProfileByAdmin = async (req, res) => {
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found!" });
     }
-    res.status(200).json({ success: true, message: "User profile fetched successfully!", user: user });
+    res.status(200).json({ success: true, message: "User profile fetched successfully!", user });
   } catch (error) {
     console.error("Error fetching user profile by admin:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
