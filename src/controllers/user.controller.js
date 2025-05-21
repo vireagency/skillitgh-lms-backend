@@ -122,7 +122,7 @@ exports.deleteUserProfileByAdmin = async (req, res) => {
     }
     res.status(200).json({ success: true, message: "User profile deleted successfully!" });
   } catch (error) {
-    console.error("Error deleting user profile by admin:", );
+    console.error("Error deleting user profile by admin:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 }
