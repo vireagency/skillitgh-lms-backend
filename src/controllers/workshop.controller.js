@@ -229,7 +229,14 @@ exports.updateWorkshop = async (req, res) => {
     const workshopImage = req.files?.workshopImage?.[0]?.path;
     const resource = req.files?.resource?.map(file => file.path);
 
-    if (!title || !description || !date || !duration || !location) {
+    let facilitator;
+    try {
+      facilitator = JSON.parse(req.body.facilitator);
+    } catch (error) {
+      return res.status(400).json({ success: false, message: "Invalid facilitator data!" });
+    }
+
+    if (!title || !description || !date || !duration || !location || !facilitator) {
       return res.status(400).json({ success: false, message: "All fields are required!" });
     }
     const workshop = await Workshop.findById(workshopId);
