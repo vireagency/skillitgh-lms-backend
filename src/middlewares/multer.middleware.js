@@ -13,7 +13,7 @@ const storage = new  CloudinaryStorage({
       folderName = 'skillitgh/courses';
     } else if (originalUrl.includes('workshops')) {
       folderName = 'skillitgh/workshops';
-    } else if (originalUrl.includes(['users', 'profile'])) {
+    } else if (originalUrl.includes('users') || originalUrl.includes('profile')) {
       folderName = 'skillitgh/profiles';
     } // else if (req.body.resource) {
     //   folderName = `skillitgh/${req.body.resource}`;
