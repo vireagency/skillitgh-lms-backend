@@ -2,6 +2,7 @@ const Workshop = require('../models/workshop.model');
 const User = require('../models/user.model');
 const { sendMail } = require('../utils/email.transport');
 const Notification = require('../models/notification.model');
+const cloudinary = require('../../config/cloudinary');
 
 exports.getUpcomingWorkshops = async (req, res) => {
   try {
@@ -99,12 +100,8 @@ exports.createWorkshop = async (req, res) => {
     // const workshopImage = req.files?.workshopImage?.[0]?.path;
     // const resource = req.files?.resource?.map(file => file.path);
     const workshopImage = req.file?.path;
-    console.log("Received body:", req.body);
-    console.log("Received files:", req.file);
 
-    console.log("Workshop Image and Resource:", req.files);
-
-     let facilitator;
+    let facilitator;
     try {
       facilitator = JSON.parse(req.body.facilitator);
     } catch (error) {
@@ -134,8 +131,7 @@ exports.createWorkshop = async (req, res) => {
     await newWorkshop.save();
     res.status(201).json({ success: true, message: "Workshop created successfully.", workshop: newWorkshop });
   } catch (error) {
-    console.error("Error creating workshop:", error.message || error);
-    console.error(error.stack);
+    console.error("Error creating workshop:", error)
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 }
@@ -146,10 +142,32 @@ exports.deleteWorkshop = async (req, res) => {
     if (!workshopId) {
       return res.status(400).json({ success: false, message: "Workshop ID is required!" });
     }
-    const deletedWorkshop = await Workshop.findByIdAndDelete(workshopId);
-    if (!deletedWorkshop) {
+    const workshop = await Workshop.findById(workshopId);
+    if (!workshop) {
       return res.status(404).json({ success: false, message: "Workshop not found!" });
     }
+    // Delete the workshop image from Cloudinary if it exists
+    if (workshop.workshopImagePublicId) {
+      await cloudinary.deleteFromCloudinary(workshop.workshopImagePublicId);
+    }
+    // Delete the workshop from the registered workshops all attendees
+    const attendees = workshop.attendees;
+    if (attendees && attendees.length > 0) {
+      await User.updateMany(
+        { _id: { $in: attendees } },
+        { $pull: { workshops: workshopId } }
+      );
+      // for (const attendeeId of attendees) {
+      //   const user = await User.findById(attendeeId);
+      //   if (user) {
+      //     user.workshops = user.workshops.filter(workshop => workshop.toString() !== workshopId.toString());
+      //     await user.save();
+      //   }
+      // }
+    }
+    // Delete the workshop from the database
+    await Workshop.findByIdAndDelete(workshopId);
+
     res.status(200).json({ success: true, message: "Workshop deleted successfully." });
   } catch (error) {
     console.error("Error deleting workshop:", error);
@@ -226,8 +244,9 @@ exports.updateWorkshop = async (req, res) => {
   try {
     const { workshopId } = req.params;
     const { title, description, date, duration, location, price } = req.body;
-    const workshopImage = req.files?.workshopImage?.[0]?.path;
-    const resource = req.files?.resource?.map(file => file.path);
+    // const workshopImage = req.files?.workshopImage?.[0]?.path;
+    // const resource = req.files?.resource?.map(file => file.path);
+    const workshopImage = req.file?.path;
 
     let facilitator;
     try {
@@ -249,18 +268,25 @@ exports.updateWorkshop = async (req, res) => {
     if (workshopDate < today) {
       return res.status(400).json({ success: false, message: "Workshop date must be in the future!" });
     }
-    workshop.title = title;
-    workshop.description = description;
-    workshop.date = date;
-    workshop.duration = duration;
-    workshop.location = location;
-    workshop.price = price;
-    if (workshopImage) {
+    workshop.title = title || workshop.title;
+    workshop.description = description || workshop.description;
+    workshop.date = date || workshop.date;
+    workshop.duration = duration || workshop.duration;
+    workshop.location = location || workshop.location;
+    workshop.price = price || workshop.price;
+    workshop.facilitator = facilitator || workshop.facilitator;
+
+    // Handle old image deletion if a new one is uploaded
+    if (workshop.workshopImage !== workshopImage && workshop.workshopImagePublicId) {
+      await cloudinary.deleteFromCloudinary(workshop.workshopImagePublicId);
+    }
+    if (workshopImage && req.file?.filename) {
       workshop.workshopImage = workshopImage;
+      workshop.workshopImagePublicId = req.file.filename;
     }
-    if (resource) {
-      workshop.resource = [...workshop.resource, ...resource];
-    }
+    // if (resource) {
+    //   workshop.resource = [...workshop.resource, ...resource];
+    // }
     await workshop.save();
     res.status(200).json({ success: true, message: "Workshop updated successfully.", workshop });
   } catch (error) {
