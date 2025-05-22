@@ -227,7 +227,7 @@ router.post('/auth/signout', authController.signOut);
 
 router.post('/auth/reset-password', authController.resetPassword);
 
-router.post('/auth/forgot-password', authController.forgotPassword);
+router.post('/auth/forgot-password', authController.forgotPasswordLimiter, authController.forgotPassword);
 
 router.put('/auth/change-password', auth, authController.changePassword);
 
