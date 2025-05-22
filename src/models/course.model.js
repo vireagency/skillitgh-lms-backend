@@ -16,6 +16,11 @@ const courseSchema = new mongoose.Schema({
     trim: true,
     default: "https://ece.ucsd.edu/sites/default/files/assets/New-Course.png"
   },
+  courseImagePublicId: {
+    type: String,
+    trim: true,
+    default: ""
+  },
   price: {
     type: String,
     required: true,

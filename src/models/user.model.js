@@ -30,6 +30,11 @@ const userSchema = new mongoose.Schema({
     trim: true,
     default: "https://upload.wikimedia.org/wikipedia/commons/5/59/User-avatar.svg"
   },
+  userImagePublicId: {
+    type: String,
+    trim: true,
+    default: ""
+  },
   role: {
     type: String,
     enum: ['admin', 'user'],
@@ -66,6 +71,14 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: null
   },
+  resetTokenExpiry: {
+    type: Date,
+    default: null
+  },
+  tokenVersion: {
+    type: Number,
+    default: 0
+  }
 }, { timestamps: true })
 
 module.exports = mongoose.model('User', userSchema);      
