@@ -508,7 +508,7 @@ router.post('/workshops/:workshopId/register', auth, registerForWorkshop);
 //    { name: 'resource', maxCount: 5 } 
 // ]), createWorkshop);
 
-router.post('/workshops/create', auth, authorizeRole('admin'),upload.single('workshopImage'), createWorkshop);
+router.post('/workshops', auth, authorizeRole('admin'),upload.single('workshopImage'), createWorkshop);
 
 router.patch('/workshops/:workshopId', auth, authorizeRole('admin'), upload.array('resource', 5), updateWorkshopResources);
 /**
@@ -592,14 +592,17 @@ router.patch('/workshops/:workshopId', auth, authorizeRole('admin'), upload.arra
 router.delete('/workshops/:workshopId', auth, authorizeRole('admin'), deleteWorkshop);
 
 /**
- * @route   PATCH api/workshops/{workshopId}
+ * @route   PUT api/workshops/{workshopId}
  * @desc    Update a workshop
  * @access  Private
  */   
-router.put('/workshops/:workshopId', auth, authorizeRole('admin'), upload.fields([
-   { name: 'workshopImage', maxCount: 1 },
-   { name: 'resource', maxCount: 5 }
-]), updateWorkshop);
+// router.put('/workshops/:workshopId', auth, authorizeRole('admin'), upload.fields([
+//    { name: 'workshopImage', maxCount: 1 },
+//    { name: 'resource', maxCount: 5 }
+// ]), updateWorkshop);
+
+router.put('/workshops/:workshopId', auth, authorizeRole('admin'), upload.single('workshopImage'), updateWorkshop);
+
 /**
  * @swagger
  * /api/v1/workshops/{workshopId}/attendees:
