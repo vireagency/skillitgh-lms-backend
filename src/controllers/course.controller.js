@@ -161,6 +161,7 @@ exports.createCourse = async (req, res) => {
   try {
     const { title, description, duration, price } = req.body;
     const courseImage = req.file?.path ;
+    const courseImagePublicId = req.file?.filename;
 
     let instructor;
     try {
@@ -180,6 +181,7 @@ exports.createCourse = async (req, res) => {
       title,
       description, 
       courseImage,
+      courseImagePublicId,
       duration,
       price,
       instructor
