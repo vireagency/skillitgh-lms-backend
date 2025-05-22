@@ -7,7 +7,9 @@ const storage = new  CloudinaryStorage({
   params: (req, file) => {
     let folderName = 'skillitgh';
     const originalUrl = req.originalUrl || '';
-    console.log("Full request URL:", req.originalUrl);
+    if (process.env.NODE_ENV === 'development') {
+      console.debug("Full request URL:", req.originalUrl);
+    }
 
     if (originalUrl.includes('courses')) {
       folderName = 'skillitgh/courses';
