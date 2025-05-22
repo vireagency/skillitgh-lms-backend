@@ -6,20 +6,21 @@ const storage = new  CloudinaryStorage({
   cloudinary,
   params: (req, file) => {
     let folderName = 'skillitgh';
-    const baseUrl = req.baseUrl || '';
+    const originalUrl = req.originalUrl || '';
+    console.log("Full request URL:", req.originalUrl);
 
-    if (baseUrl.includes('courses')) {
+    if (originalUrl.includes('courses')) {
       folderName = 'skillitgh/courses';
-    } else if (baseUrl.includes('workshops')) {
+    } else if (originalUrl.includes('workshops')) {
       folderName = 'skillitgh/workshops';
-    } else if (baseUrl.includes('users')) {
+    } else if (originalUrl.includes(['users', 'profile'])) {
       folderName = 'skillitgh/profiles';
     } // else if (req.body.resource) {
     //   folderName = `skillitgh/${req.body.resource}`;
     // }
     return {
       folder: folderName,
-      allowed_formats: ['jpg', 'png', 'jpeg', 'pdf', 'docx', 'pptx'],
+      allowed_formats: ['jpg', 'png', 'jpeg', 'webp', 'pdf', 'docx', 'pptx'],
       transformation: [{ width: 500, height: 500, crop: 'limit' }],
     }
   },
