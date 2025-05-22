@@ -5,6 +5,7 @@ const Workshop = require('../models/workshop.model');
 const { sendMail } = require('../utils/email.transport');
 //const sendEmail = require('../utils/email.transport.js')
 const Notification = require('../models/notification.model');
+const cloudinaryHelper = require('../utils/cloudinaryHelper');
 
 exports.getCourses = async (req, res) => {
   try {
@@ -286,21 +287,16 @@ exports.updateCourse = async (req, res) => {
   try {
     const { courseId } = req.params;
     const { title, description, duration, price } = req.body;
+
+    if (!title || !description) {
+      return res.status(400).json({ success: false, message: "Course title and description are required!" });
+    }
+
     const courseImage = req.file?.path ;
+
     if (!courseId) {
       return res.status(400).json({ success: false, message: "Course ID is required!" });
     }
-    // const course = await Course.findById(courseId);
-    // if (!course) {
-    //   return res.status(404).json({ success: false, message: "Course not found!" });
-    // }
-    // course.title = title || course.title;
-    // course.description = description || course.description;
-    // course.duration = duration || course.duration;
-    // course.price = price || course.price;
-    // if (courseImage) {
-    //   course.courseImage = courseImage;
-    // }
 
     let instructor;
     try {
@@ -309,14 +305,39 @@ exports.updateCourse = async (req, res) => {
       return res.status(400).json({ success: false, message: "Invalid facilitator data!" });
     }
 
-    const course = await Course.findByIdAndUpdate(courseId, {
-      title,
-      description,
-      duration,
-      price,
-      courseImage,
-      instructor
-    }, { new: true, runValidators: true });
+    const course = await Course.findById(courseId);
+     if (!course) {
+       return res.status(404).json({ success: false, message: "Course not found!" });
+     }
+
+     // Delete previous image if it's not the default and a new image is uploaded
+     if (course.courseImagePublicId && course.courseImage !== courseImage) {
+       await cloudinaryHelper.deleteFromCloudinary(course.courseImagePublicId);
+     }
+
+     // Only update the courseImage if a new one is provided
+     if (courseImage && req.file?.filename) {
+      course.courseImage = courseImage;
+      course.courseImagePublicId = req.file.filename;
+     }
+
+    course.title = title || course.title;
+    course.description = description || course.description;
+    course.duration = duration || course.duration;
+    course.price = price || course.price;
+    course.instructor = instructor || course.instructor;
+    // if (courseImage) {
+    //   course.courseImage = courseImage;
+    // }
+
+    // const course = await Course.findByIdAndUpdate(courseId, {
+    //   title,
+    //   description,
+    //   duration,
+    //   price,
+    //   courseImage,
+    //   instructor
+    // }, { new: true, runValidators: true });
 
     if (!course) {
       return res.status(404).json({ success: false, message: "Course not found!" });
@@ -337,10 +358,32 @@ exports.deleteCourse = async (req, res) => {
     if (!courseId) {
       return res.status(400).json({ success: false, message: "Course ID is required!" });
     }
-    const course = await Course.findByIdAndDelete(courseId);
+    const course = await Course.findById(courseId);
     if (!course) {
       return res.status(404).json({ success: false, message: "Course not found!" });
     }
+    // Delete the course image from Cloudinary if it exists
+    if (course.courseImagePublicId) {
+      await cloudinaryHelper.deleteFromCloudinary(course.courseImagePublicId);
+    }
+    // Delete the course from the database
+    await Course.findByIdAndDelete(courseId);
+
+    // check if there are any registrations for this course
+    // If there are registrations, remove the course from the registered users
+    const registrations = await CourseRegistration.find({ course: courseId });
+    if (registrations && registrations.length > 0) {
+      for (const registration of registrations) {
+        const user = await User.findById(registration.enrolledUser);
+        if (user) {
+          user.courses = user.courses.filter(course => course.toString() !== courseId);
+          await user.save();
+        }
+      }
+    } 
+    // Remove the course from all registered users
+    await CourseRegistration.deleteMany({ course: courseId });
+    
     res.status(200).json({ success: true, message: "Course deleted successfully" });
   } catch (error) {
     console.error("Error in deleting the course:", error);
