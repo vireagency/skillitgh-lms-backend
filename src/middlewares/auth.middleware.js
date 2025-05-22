@@ -14,6 +14,10 @@ exports.auth = async (req, res, next) => {
       if (err) {
         return res.status(401).json({ success: false, message: "Access denied! Please log in again." })
       }
+      const user = User.findById(decoded.id);
+      if (!user || decoded.tokenVersion !== user.tokenVersion) {
+        return res.status(401).json({ success: false, message: "Access denied! Please log in again." })
+      }
       req.user = { userId: decoded.id, role: decoded.role }; // Attach user ID and role to request object
 
       next();
