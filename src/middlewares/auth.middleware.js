@@ -10,11 +10,11 @@ exports.auth = async (req, res, next) => {
       return res.status(401).json({ success: false, message: "Access denied. Please log in." });
     }
     // verify token
-    jwt.verify(accessToken, process.env.PRIVATE_KEY, (err, decoded) => {
+    jwt.verify(accessToken, process.env.PRIVATE_KEY, async (err, decoded) => {
       if (err) {
         return res.status(401).json({ success: false, message: "Access denied! Please log in again." })
       }
-      const user = User.findById(decoded.id);
+      const user = await User.findById(decoded.id);
       if (!user || decoded.tokenVersion !== user.tokenVersion) {
         return res.status(401).json({ success: false, message: "Access denied! Please log in again." })
       }
