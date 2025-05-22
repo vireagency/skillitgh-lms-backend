@@ -87,7 +87,7 @@ exports.signIn = async (req, res) => {
     if (!accessToken) {
       return res.status(400).json({ success: false, message: "Token not generated!" });
     }
-    
+
     // remove password from user object
     const { password: _ , ...userObject } = existingUser._doc; 
     const user = { ...userObject };
@@ -156,7 +156,7 @@ exports.forgotPassword = async (req, res) => {
     const emailData = {
       email,
       subject: "Reset Your Password",
-      text: `
+      html: `
         <h2>Password Reset Request</h2>
         <p>Click the link below to reset your password: This link will expire in 1 hour.</p>
         <a href="${resetLink}" style="text-decoration: none;">
