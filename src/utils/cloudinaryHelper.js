@@ -20,7 +20,7 @@ exports.uploadToCloudinary = async (filePath) => {
       unique_filename: false,
       overwrite: true
     });
-    return result.secure_url;
+    return { url: result.secure_url, publicId: result.public_id };
   } catch (error) {
     console.error("Error uploading image to Cloudinary:", error);
     throw new Error("Failed to upload image to Cloudinary");
