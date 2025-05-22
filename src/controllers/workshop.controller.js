@@ -2,7 +2,7 @@ const Workshop = require('../models/workshop.model');
 const User = require('../models/user.model');
 const { sendMail } = require('../utils/email.transport');
 const Notification = require('../models/notification.model');
-const cloudinary = require('../../config/cloudinary');
+const cloudinary = require('../utils/cloudinaryHelper');
 
 exports.getUpcomingWorkshops = async (req, res) => {
   try {
@@ -100,6 +100,7 @@ exports.createWorkshop = async (req, res) => {
     // const workshopImage = req.files?.workshopImage?.[0]?.path;
     // const resource = req.files?.resource?.map(file => file.path);
     const workshopImage = req.file?.path;
+    const workshopImagePublicId = req.file?.filename;
 
     let facilitator;
     try {
@@ -121,12 +122,15 @@ exports.createWorkshop = async (req, res) => {
       return res.status(400).json({ success: false, message: "Workshop date must be in the future!" });
     }
 
-    const newWorkshop = new Workshop({ title, description, workshopImage, date, duration, facilitator, price, location });
+    const newWorkshop = new Workshop({ title, description, workshopImage, workshopImagePublicId, date, duration, facilitator, price, location });
 
     // if (req.files && req.files.length > 0) {
     //   newWorkshop.resource = req.files.map(file => file.path);
     // }
-
+    // if (workshopImage && req.file?.filename) {
+    //   newWorkshop.workshopImage = workshopImage;
+    //   newWorkshop.workshopImagePublicId = req.file.filename;
+    // }
 
     await newWorkshop.save();
     res.status(201).json({ success: true, message: "Workshop created successfully.", workshop: newWorkshop });
