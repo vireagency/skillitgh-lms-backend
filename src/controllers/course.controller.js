@@ -1,6 +1,11 @@
 const Course = require('../models/course.model');
 const CourseRegistration = require('../models/course.registration');
 const User = require('../models/user.model');
+const Workshop = require('../models/workshop.model');
+const { sendMail } = require('../utils/email.transport');
+//const sendEmail = require('../utils/email.transport.js')
+const Notification = require('../models/notification.model');
+const cloudinaryHelper = require('../utils/cloudinaryHelper');
 
 exports.getCourses = async (req, res) => {
   try {
@@ -8,7 +13,7 @@ exports.getCourses = async (req, res) => {
     if (!courses) {
       return res.status(404).json({ success: false, message: "Courses not found" });
     }
-    res.status(200).json({ success: true, message: "Successfully fetched all courses", courses: courses });
+    res.status(200).json({ success: true, message: "Successfully fetched all courses", courses });
   } catch (error) {
     console.error("Error in getting all courses", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
@@ -22,7 +27,7 @@ exports.getCourseById = async (req, res) => {
     if (!course) {
       return res.status(404).json({ message: "Course not found" });
     }
-    res.status(200).json({ success: true, message: "Successfully fetched course by Id", course: course });
+    res.status(200).json({ success: true, message: "Successfully fetched course by Id", course });
   } catch (error) {
     console.error("Error in fetching this course by Id:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
@@ -68,7 +73,29 @@ exports.registerForCourse = async (req, res) => {
     }
     await user.save();
 
-    res.status(200).json({ success: true, message: "You have successfully enrolled in this course", registration: registration, user: user });
+    course.registeredUsers.push(userId);
+    await course.save();
+
+    // Send email to user
+    const emailData = {
+      email: user.email,
+      subject: "Course Registration Confirmation",
+      text: `Congratulations ${user.firstName}!\n\nYou have successfully registered for the SkillitGh ${course.title} course.`
+    };
+    await sendMail(emailData);
+
+    // // Send notification to user
+    const notification = await Notification.create({
+      userId,
+      type: 'course',
+      message: `${ user.firstName } just registered for the ${ course.title } course.`,
+    });
+    if (!notification) {
+      return res.status(400).json({ success: false, message: "Notification not sent!" });
+    }
+
+
+    res.status(200).json({ success: true, message: "You have successfully enrolled in this course", registration, user });
   } catch (error) {
     console.error("Error in registering course:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
@@ -93,7 +120,7 @@ exports.getRegisteredCourses = async (req, res) => {
       return res.status(404).json({ success: false, message: "No registered courses found!" });
     }
 
-    res.status(200).json({ success: true, message: "Successfully fetched all registered courses", courses: courses });
+    res.status(200).json({ success: true, message: "Successfully fetched all registered courses", courses });
   } catch (error) {
     console.error("Error in fetching registered courses:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
@@ -122,7 +149,7 @@ exports.getRegisteredUsers = async (req, res) => {
     if (!users || users.length === 0) {
       return res.status(404).json({ success: false, message: "No registered users found!" });
     }
-    res.status(200).json({ success: true, message: "Successfully fetched all registered users", users: users });
+    res.status(200).json({ success: true, message: "Successfully fetched all registered users", users });
   } catch (error) {
     console.error("Error in fetching registered users:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
@@ -134,7 +161,15 @@ exports.createCourse = async (req, res) => {
   try {
     const { title, description, duration, price } = req.body;
     const courseImage = req.file?.path ;
-    console.log("uploaded file:", req.file);
+    const courseImagePublicId = req.file?.filename;
+
+    let instructor;
+    try {
+      instructor = JSON.parse(req.body.instructor);
+    } catch (error) {
+      return res.status(400).json({ success: false, message: "Invalid instructor data!" });
+    }
+
     if (!title || !duration ) {
       return res.status(400).json({ success: false, message: "course title and duration are required!" });
     }
@@ -146,14 +181,16 @@ exports.createCourse = async (req, res) => {
       title,
       description, 
       courseImage,
+      courseImagePublicId,
       duration,
-      price
+      price,
+      instructor
     });
     
     if (!course) {
       return res.status(400).json({ success: false, message: "Course creation failed!" });
     }
-    res.status(201).json({ success: true, message: "Course created successfully", course: course });
+    res.status(201).json({ success: true, message: "Course created successfully", course });
   } catch (error) {
     console.error("Error in creating course:", error.message);
     res.status(500).json({ success: false, message: "Internal Server Error" });
@@ -178,7 +215,7 @@ exports.getOtherCourses = async (req, res) => {
     if (!courses || courses.length === 0) {
       return res.status(404).json({ success: false, message: "No other courses found!" });
     }
-    res.status(200).json({ success: true, message: "Successfully fetched other courses", courses: courses });
+    res.status(200).json({ success: true, message: "Successfully fetched other courses", courses });
   } catch (error) {
     console.error("Error in fetching other courses:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
@@ -216,11 +253,286 @@ exports.registerForOtherCourses = async (req, res) => {
     }
     user.courses.push(courseId);
     await user.save();
+
+    existingCourse.registeredUsers.push(userId);
+    await existingCourse.save();
+
+    // Send email to user
+    const emailData = {
+      email: user.email,
+      subject: "Course Registration Confirmation",
+      text: `Congratulations ${user.firstName}!\n\nYou have successfully registered for the SkillitGh ${existingCourse.title} course.`
+    }
+
+    await sendMail(emailData);
+
+    // Send notification to user
+    const notification = await Notification.create({
+      userId,
+      type: 'course',
+      message: `${ user.firstName } just registered for the ${ existingCourse.title } course.`,
+    });
+    if (!notification) {
+      return res.status(400).json({ success: false, message: "Notification not sent!" });
+    }
     
-    res.status(201).json({ success: true, message: "This course is successfully registered", registration: otherCourse, user: user });
+    res.status(201).json({ success: true, message: "This course is successfully registered", registration: otherCourse, user });
 
   } catch (error) {
     console.error("Error registering for another course:", error.message);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+}
+
+// @desc      Update a course
+exports.updateCourse = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    const { title, description, duration, price } = req.body;
+
+    if (!title || !description) {
+      return res.status(400).json({ success: false, message: "Course title and description are required!" });
+    }
+
+    const courseImage = req.file?.path ;
+
+    if (!courseId) {
+      return res.status(400).json({ success: false, message: "Course ID is required!" });
+    }
+
+    let instructor;
+    try {
+      instructor = JSON.parse(req.body.instructor);
+    } catch (error) {
+      return res.status(400).json({ success: false, message: "Invalid facilitator data!" });
+    }
+
+    const course = await Course.findById(courseId);
+     if (!course) {
+       return res.status(404).json({ success: false, message: "Course not found!" });
+     }
+
+     // Delete previous image if it's not the default and a new image is uploaded
+     if (course.courseImagePublicId && course.courseImage !== courseImage) {
+       await cloudinaryHelper.deleteFromCloudinary(course.courseImagePublicId);
+     }
+
+     // Only update the courseImage if a new one is provided
+     if (courseImage && req.file?.filename) {
+      course.courseImage = courseImage;
+      course.courseImagePublicId = req.file.filename;
+     }
+
+    course.title = title || course.title;
+    course.description = description || course.description;
+    course.duration = duration || course.duration;
+    course.price = price || course.price;
+    course.instructor = instructor || course.instructor;
+    // if (courseImage) {
+    //   course.courseImage = courseImage;
+    // }
+
+    // const course = await Course.findByIdAndUpdate(courseId, {
+    //   title,
+    //   description,
+    //   duration,
+    //   price,
+    //   courseImage,
+    //   instructor
+    // }, { new: true, runValidators: true });
+
+    if (!course) {
+      return res.status(404).json({ success: false, message: "Course not found!" });
+    }
+    
+    await course.save();
+    res.status(200).json({ success: true, message: "Course updated successfully", course });
+  } catch (error) {
+    console.error("Error in updating the course:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+}
+
+// @desc      Delete a course
+exports.deleteCourse = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    if (!courseId) {
+      return res.status(400).json({ success: false, message: "Course ID is required!" });
+    }
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.status(404).json({ success: false, message: "Course not found!" });
+    }
+    // Delete the course image from Cloudinary if it exists
+    if (course.courseImagePublicId) {
+      await cloudinaryHelper.deleteFromCloudinary(course.courseImagePublicId);
+    }
+    // Delete the course from the database
+    await Course.findByIdAndDelete(courseId);
+
+    // check if there are any registrations for this course
+    // If there are registrations, remove the course from the registered users
+    const registrations = await CourseRegistration.find({ course: courseId });
+    if (registrations && registrations.length > 0) {
+      for (const registration of registrations) {
+        const user = await User.findById(registration.enrolledUser);
+        if (user) {
+          user.courses = user.courses.filter(course => course.toString() !== courseId);
+          await user.save();
+        }
+      }
+    } 
+    // Remove the course from all registered users
+    await CourseRegistration.deleteMany({ course: courseId });
+    
+    res.status(200).json({ success: true, message: "Course deleted successfully" });
+  } catch (error) {
+    console.error("Error in deleting the course:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+}
+
+exports.unregisterFromCourse = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    const { userId } = req.user;
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "Unauthorized: Please Login."});
+    }
+    if (!courseId) {
+      return res.status(400).json({ success: false, message: "Course ID is required!" });
+    }
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.status(404).json({ success: false, message: "Course not found!" });
+    }
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found!" });
+    }
+    const registration = await CourseRegistration.findOneAndDelete({ enrolledUser: userId, course: courseId });
+    if (!registration) {
+      return res.status(404).json({ success: false, message: "You are not registered for this course!" });
+    }
+    user.courses = user.courses.filter(course => course.toString() !== courseId);
+    await user.save();
+
+    res.status(200).json({ success: true, message: "Successfully unregistered from the course", registration });
+  } catch (error) {
+    console.error("Error in unregistering from course:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+}
+
+// @desc      dashboard statistics
+exports.getDashboardMetrics = async (req, res) => {
+  try {
+    const [totalCourses, totalUsers, totalRegistrations, totalWorkshops] = await Promise.all([
+      Course.countDocuments(),
+      User.countDocuments(),
+      CourseRegistration.countDocuments(),
+      Workshop.countDocuments(),
+    ]);
+
+    const topCourses = await CourseRegistration.aggregate([
+      {
+        $group: {
+          _id: "$course",
+          registrationCount: { $sum: 1 }
+        }
+      },
+    {
+      $sort: { registrationCount: -1 },
+    },
+    {
+      $limit: 5
+    },
+    {
+      $lookup: {
+        from: "courses",
+        localField: "_id",
+        foreignField: "_id",
+        as: "courseDetails"
+      }
+    },
+    {
+      $unwind: "$course"
+    },
+    {
+      $project: {
+        _id: 0,
+        courseTitle: "$course.courseTitle",
+        registrationCount: 1
+      }
+    }
+    ]);
+
+    const userRoles = await User.aggregate([
+      {
+        $group: {
+          _id: "$role",
+          count: { $sum: 1 }
+        }
+      }
+    ]);
+
+    res.status(200).json({ success: true, message: "Successfully fetched dashboard metics", metrics: {
+      totalCourses,
+      totalUsers,
+      totalRegistrations,
+      totalWorkshops,
+      topCourses,
+      userRoles
+    } });
+  } catch (error) {
+    console.error("Error in fetching dashboard metrics:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+}
+
+exports.getRegisteredCoursesByAdmin = async (req, res) => {
+  try {
+    const registrations = await CourseRegistration.find().populate('course enrolledUser');
+    if (!registrations || registrations.length === 0) {
+      return res.status(404).json({ success: false, message: "No registered course found!" });
+    }
+
+    const registeredUsers = registrations.map(reg => reg.enrolledUser);
+    const userCount = registeredUsers.length;
+    const courseCount = registrations.reduce((acc, reg) => {
+      if (!acc[reg.course._id]) {
+        acc[reg.course._id] = 1;
+      } else {
+        acc[reg.course._id]++;
+      }
+      return acc;
+    }, {});
+
+
+    res.status(200).json({ success: true, message: "Successfully fetched all registered courses", registrations });
+  } catch (error) {
+    console.error("Error in fetching registered courses:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+}
+
+exports.getRegisteredUsersByAdmin = async (req, res) => {
+  try {
+    const courses = await Course.find({ registeredUsers: { $exists: true, $ne: [] } }).populate('registeredUsers', 'firstName lastName email userImage');
+    if (!courses || courses.length === 0) {
+      return res.status(404).json({ success: false, message: "No registered users found!" });
+    }
+    const totalStudents = courses.reduce((acc, course) => acc + course.registeredUsers.length, 0);
+    const courseCount = await Course.countDocuments({ registeredUsers: { $exists: true, $not: { $size: 0}}});
+    const courseDetails = courses.map(course => ({
+      courseTitle: course.title,
+      studentCount: course.registeredUsers.length
+    }));
+
+    res.status(200).json({ success: true, message: "Successfully fetched all registered users", courses, courseDetails,courseCount, totalStudents });
+  } catch (error) {
+    console.error("Error in fetching users for a course:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 }
