@@ -3,6 +3,8 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Notification = require('../models/notification.model');
 const { sendMail } = require('../utils/email.transport');
+const rateLimit = require('express-rate-limit');
+const crypto = require('crypto');
 
 // @desc    Register a new user
 exports.register = async (req, res) => {
@@ -74,7 +76,18 @@ exports.signIn = async (req, res) => {
       return res.status(400).json({ success: false, message: "User does not exist!" });
     }
     // generate token
-    const accessToken = jwt.sign({ id: existingUser._id, email: existingUser.email, role: existingUser.role }, process.env.PRIVATE_KEY, { expiresIn : "1d" })
+    const accessToken = jwt.sign({ 
+      id: existingUser._id, 
+      email: existingUser.email, 
+      role: existingUser.role, 
+      tokenVersion: existingUser.tokenVersion 
+    }, 
+    process.env.PRIVATE_KEY, { expiresIn : "1d" });
+    // check if token is generated successfully
+    if (!accessToken) {
+      return res.status(400).json({ success: false, message: "Token not generated!" });
+    }
+    
     // remove password from user object
     const { password: _ , ...userObject } = existingUser._doc; 
     const user = { ...userObject };
@@ -127,15 +140,32 @@ exports.forgotPassword = async (req, res) => {
       return res.status(400).json({ success: false, message: "User does not exist!" });
     }
     // generate reset token
-    const resetToken = jwt.sign({ id: existingUser._id, email: existingUser.email }, process.env.PRIVATE_KEY, { expiresIn: "1h" });
+
+    // const resetToken = jwt.sign({ id: existingUser._id, email: existingUser.email }, process.env.PRIVATE_KEY, { expiresIn: "1h" });
+
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
     // save reset token to user
-    existingUser.resetToken = resetToken;
+    existingUser.resetToken = hashedToken;
+    existingUser.resetTokenExpiry = Date.now() + 60 * 60 * 1000; // 1 hour expiry
+    // save user to db
     await existingUser.save();
+
+    const resetLink = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`; 
     // send email to user with reset token
     const emailData = {
       email,
-      subject: "Password Reset",
-      text: `Click the link to reset your password: ${process.env.FRONTEND_URL}/reset-password/${resetToken}`,
+      subject: "Reset Your Password",
+      text: `
+        <h2>Password Reset Request</h2>
+        <p>Click the link below to reset your password: This link will expire in 1 hour.</p>
+        <a href="${resetLink}" style="text-decoration: none;">
+          <button style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
+            Reset Password
+          </button>
+        </a>
+        <p>If you did not request this, please ignore this email.</p>
+      `,
     };
     await sendMail(emailData);
 
@@ -165,12 +195,16 @@ exports.resetPassword = async (req, res) => {
       return res.status(400).json({ success: false, message: "All fields are required!" });
     }
     // verify token
-    const decoded = jwt.verify(resetToken, process.env.PRIVATE_KEY);
-    if (!decoded) {
-      return res.status(400).json({ success: false, message: "Invalid or expired token!" });
-    }
+    // const decoded = jwt.verify(resetToken, process.env.PRIVATE_KEY);
+    // if (!decoded) {
+    //   return res.status(400).json({ success: false, message: "Invalid or expired token!" });
+    // }
+    // const existingUser = await User.findById(decoded.id).select("+password");
+
+    const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+    const existingUser = await User.findOne({ resetToken: hashedToken, resetTokenExpiry: { $gt: Date.now() } }).select("+password");
+
     // check if user exists
-    const existingUser = await User.findById(decoded.id).select("+password");
     if (!existingUser) {
       return res.status(400).json({ success: false, message: "User does not exist!" });
     }
@@ -180,6 +214,9 @@ exports.resetPassword = async (req, res) => {
     // update password
     existingUser.password = hashedPassword;
     existingUser.resetToken = undefined; // remove reset token
+    existingUser.resetTokenExpiry = undefined; // remove reset token expiry
+    existingUser.tokenVersion += 1; // increment token version
+    // save user to db
     await existingUser.save();
     
     res.status(200).json({ success: true, message: "Password reset successfully!" });
@@ -213,6 +250,8 @@ exports.changePassword = async (req, res) => {
     const hashedPassword = await bcrypt.hash(newPassword, salt);
     // update password
     existingUser.password = hashedPassword || existingUser.password;
+    existingUser.tokenVersion += 1; // increment token version
+    // save user to db
     await existingUser.save();
     
     res.status(200).json({ success: true, message: "Password changed successfully!" });
@@ -221,3 +260,11 @@ exports.changePassword = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 }
+
+exports.forgotPasswordLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // Limit each IP to 5 requests per windowMs
+  message: "Too many requests from this IP, please try again later.",
+  standardHeaders: true,
+  legacyHeaders: false,
+})
