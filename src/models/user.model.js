@@ -53,7 +53,7 @@ const userSchema = new mongoose.Schema({
   phoneNumber: {
     type: String,
     trim: true,
-    default: "xxx-xxxx-xxxx"
+    default: "xxx-xxx-xxxx"
   },
   courses: [{
     type: mongoose.Schema.Types.ObjectId,
