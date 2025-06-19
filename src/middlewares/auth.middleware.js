@@ -3,22 +3,23 @@ const User = require("../models/user.model");
 
 exports.auth = async (req, res, next) => {
   try {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
-    if (!token) {
+    // const authHeader = req.headers['authorization'];
+    // const token = authHeader && authHeader.split(' ')[1];
+    const accessToken = req.cookies.accessToken || req.headers['authorization']?.split(' ')[1]; // Get token from cookies or authorization header
+    if (!accessToken) {
       return res.status(401).json({ success: false, message: "Access denied. Please log in." });
     }
     // verify token
-    jwt.verify(token, process.env.PRIVATE_KEY, (err, decoded) => {
+    jwt.verify(accessToken, process.env.PRIVATE_KEY, async (err, decoded) => {
       if (err) {
         return res.status(401).json({ success: false, message: "Access denied! Please log in again." })
       }
-      req.user = { userId: decoded.id, role: decoded.role }; // Attach user ID and role to request object
-      if (!req.user) {
-        return res.status(401).json({ success: false, message: "Unauthorized: Please log in again." });
+      const user = await User.findById(decoded.id);
+      if (!user || decoded.tokenVersion !== user.tokenVersion) {
+        return res.status(401).json({ success: false, message: "Access denied! Please log in again." })
       }
-      console.log("Decoded token:", decoded); // Log the decoded token for debugging
-      console.log("User found:", req.user); // Log the user for debugging
+      req.user = { userId: decoded.id, role: decoded.role }; // Attach user ID and role to request object
+
       next();
     });
   } catch (err) {

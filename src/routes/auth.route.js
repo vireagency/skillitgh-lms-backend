@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authController = require("../controllers/auth.controller");
+const { auth } = require('../middlewares/auth.middleware');
 
 /**
  * @swagger
@@ -184,5 +185,50 @@ router.post('/auth/register', authController.register);
  * @access   Public
 */
 router.post('/auth/signin', authController.signIn);
+router.post('/auth/signout', authController.signOut);
+/**
+ * @swagger
+ * /api/v1/auth/refresh-token:
+ *   post:
+ *     summary: Refresh access token
+ *     description: This endpoint allows a user to refresh their access token using a refresh token.
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - refreshToken
+ *             properties:
+ *               refreshToken:
+ *                 type: string
+ *                 example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+ *     responses:
+ *       200:
+ *         description: Access token refreshed successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Access token refreshed successfully
+ *                 accessToken:
+ *                   type: string
+ *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+ *
+*/
+
+router.post('/auth/reset-password', authController.resetPassword);
+
+router.post('/auth/forgot-password', authController.forgotPasswordLimiter, authController.forgotPassword);
+
+router.put('/auth/change-password', auth, authController.changePassword);
 
 module.exports = router; 

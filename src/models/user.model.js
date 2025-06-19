@@ -30,6 +30,11 @@ const userSchema = new mongoose.Schema({
     trim: true,
     default: "https://upload.wikimedia.org/wikipedia/commons/5/59/User-avatar.svg"
   },
+  userImagePublicId: {
+    type: String,
+    trim: true,
+    default: ""
+  },
   role: {
     type: String,
     enum: ['admin', 'user'],
@@ -37,15 +42,18 @@ const userSchema = new mongoose.Schema({
   },
   gender: {
     type: String,
-    enum: ['Male', 'Female']
+    enum: ['Male', 'Female', 'gender not specified'],
+    default: "gender not specified"
   },
   location: {
     type: String,
-    trim: true
+    trim: true,
+    default: "location not specified"
   },
   phoneNumber: {
     type: String,
-    trim: true
+    trim: true,
+    default: "xxx-xxx-xxxx"
   },
   courses: [{
     type: mongoose.Schema.Types.ObjectId,
@@ -59,6 +67,18 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  resetToken: {
+    type: String,
+    default: null
+  },
+  resetTokenExpiry: {
+    type: Date,
+    default: null
+  },
+  tokenVersion: {
+    type: Number,
+    default: 0
+  }
 }, { timestamps: true })
 
 module.exports = mongoose.model('User', userSchema);      
