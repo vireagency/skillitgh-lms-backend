@@ -370,7 +370,7 @@ router.get("/workshops/:workshopId", getWorkshopById);
  * @access     Private
  */
 
-router.post("/workshops/:workshopId/register", registerForWorkshop);
+router.post("/workshops/:workshopId/register", auth, registerForWorkshop);
 
 /**
  * @route     POST api/workshops/
