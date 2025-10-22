@@ -7,6 +7,7 @@ const {
   getPreviousWorkshops,
   getWorkshopById,
   registerForWorkshop,
+  registerSharedWorkshop,
   createWorkshop,
   updateWorkshopResources,
   deleteWorkshop,
@@ -371,6 +372,7 @@ router.get("/workshops/:workshopId", getWorkshopById);
  */
 
 router.post("/workshops/:workshopId/register", auth, registerForWorkshop);
+router.post("/admin/workshops/:workshopId/register", registerSharedWorkshop);
 
 /**
  * @route     POST api/workshops/
