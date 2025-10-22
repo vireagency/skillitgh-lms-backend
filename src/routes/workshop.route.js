@@ -1,24 +1,24 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { auth } = require('../middlewares/auth.middleware');
-const { authorizeRole } = require('../middlewares/role.middleware');
+const { auth } = require("../middlewares/auth.middleware");
+const { authorizeRole } = require("../middlewares/role.middleware");
 const {
-   getUpcomingWorkshops,
-   getPreviousWorkshops,
-   getWorkshopById,
-   registerForWorkshop,
-   createWorkshop,
-   updateWorkshopResources,
-   deleteWorkshop,
-   getWorkshopAttendees,
-   unregisterFromWorkshop,
-   updateWorkshop,
-   getRegisteredWorkshops,
-   getAllWorkshops,
-   getMyWorkshops
-} = require('../controllers/workshop.controller');
+  getUpcomingWorkshops,
+  getPreviousWorkshops,
+  getWorkshopById,
+  registerForWorkshop,
+  createWorkshop,
+  updateWorkshopResources,
+  deleteWorkshop,
+  getWorkshopAttendees,
+  unregisterFromWorkshop,
+  updateWorkshop,
+  getRegisteredWorkshops,
+  getAllWorkshops,
+  getMyWorkshops,
+} = require("../controllers/workshop.controller");
 
-const { upload } = require('../middlewares/multer.middleware');
+const { upload } = require("../middlewares/multer.middleware");
 
 /**
  * @swagger
@@ -49,10 +49,10 @@ const { upload } = require('../middlewares/multer.middleware');
  *               facilitator:
  *                 type: object
  *                 properties:
- *                   name: 
+ *                   name:
  *                     type: string
  *                     example: "Naana Abena"
- *                   email: 
+ *                   email:
  *                     type: string
  *                     example: "naanabena4@gmail.com"
  *               date:
@@ -80,21 +80,21 @@ const { upload } = require('../middlewares/multer.middleware');
  *                 success:
  *                   type: boolean
  *                   example: true
- *                 status: 
+ *                 status:
  *                   type: string
  *                   example: "Upcoming"
  *                 message:
- *                   type: string   
+ *                   type: string
  *                   example: "Upcoming workshops retrieved successfully."
  *                 data:
  *                  type: array
- *                  items: 
+ *                  items:
  *                    type: object
  *                    properties:
- *                      _id: 
+ *                      _id:
  *                        type: string
  *                        example: "12345"
- *                      title: 
+ *                      title:
  *                        type: string
  *                        example: "Time Management"
  *                      description:
@@ -106,7 +106,7 @@ const { upload } = require('../middlewares/multer.middleware');
  *                      facilitator:
  *                        type: object
  *                        properties:
- *                          name: 
+ *                          name:
  *                            type: string
  *                            example: "Naana Abena"
  *                          email:
@@ -130,18 +130,18 @@ const { upload } = require('../middlewares/multer.middleware');
  *                        type: array
  *                        items:
  *                          type: string
- *                          example: ["1234567890abcdef12345678", "1234567890abcdef12345679", "1234567890abcdef12345680"]  
-*/
+ *                          example: ["1234567890abcdef12345678", "1234567890abcdef12345679", "1234567890abcdef12345680"]
+ */
 
-/** 
- * @route     GET api/workshops/upcoming 
+/**
+ * @route     GET api/workshops/upcoming
  * @desc       Get all upcoming workshops
  * @access     Public
  */
 
-router.get('/workshops/upcoming', auth,  getUpcomingWorkshops);
+router.get("/workshops/upcoming", auth, getUpcomingWorkshops);
 
-/** 
+/**
  *  @swagger
  * /api/v1/workshops/previous:
  *   get:
@@ -170,10 +170,10 @@ router.get('/workshops/upcoming', auth,  getUpcomingWorkshops);
  *               facilitator:
  *                 type: object
  *                 properties:
- *                   name: 
+ *                   name:
  *                     type: string
  *                     example: "Naana Abena"
- *                   email: 
+ *                   email:
  *                     type: string
  *                     example: "naanabena4@gmail.com"
  *               date:
@@ -201,21 +201,21 @@ router.get('/workshops/upcoming', auth,  getUpcomingWorkshops);
  *                 success:
  *                   type: boolean
  *                   example: true
- *                 status: 
+ *                 status:
  *                   type: string
  *                   example: "Upcoming"
  *                 message:
- *                   type: string   
+ *                   type: string
  *                   example: "Upcoming workshops retrieved successfully."
  *                 data:
  *                  type: array
- *                  items: 
+ *                  items:
  *                    type: object
  *                    properties:
- *                      _id: 
+ *                      _id:
  *                        type: string
  *                        example: "12345"
- *                      title: 
+ *                      title:
  *                        type: string
  *                        example: "Time Management"
  *                      description:
@@ -227,7 +227,7 @@ router.get('/workshops/upcoming', auth,  getUpcomingWorkshops);
  *                      facilitator:
  *                        type: object
  *                        properties:
- *                          name: 
+ *                          name:
  *                            type: string
  *                            example: "Naana Abena"
  *                          email:
@@ -252,26 +252,31 @@ router.get('/workshops/upcoming', auth,  getUpcomingWorkshops);
  *                        items:
  *                          type: string
  *                          example: ["1234567890abcdef12345678", "1234567890abcdef12345679", "1234567890abcdef12345680"]
- * 
+ *
  * @route     GET api/workshops/previous
  * @desc       Get all previous workshops
  * @access     Public
  */
-router.get('/workshops/previous', auth, getPreviousWorkshops);
+router.get("/workshops/previous", auth, getPreviousWorkshops);
 
 /**
  * @route    GET api/workshops/registeredWorkshops
  * @desc     Get all registered workshops
  * @access   Private
  */
-router.get('/workshops/registeredWorkshops', auth, authorizeRole('admin'), getRegisteredWorkshops);
+router.get(
+  "/workshops/registeredWorkshops",
+  auth,
+  authorizeRole("admin"),
+  getRegisteredWorkshops
+);
 
 /**
  *  @route     GET api/workshops/:workshopId
  * @desc       Get workshop by ID
  * @access     Public
  */
-router.get('/workshops/:workshopId', auth, getWorkshopById);
+router.get("/workshops/:workshopId", getWorkshopById);
 
 /**
  * @swagger
@@ -319,7 +324,7 @@ router.get('/workshops/:workshopId', auth, getWorkshopById);
  *                       workshopImage:
  *                         type: string
  *                         example: "https://example.com/course-image.jpg"
- * 
+ *
  *       401:
  *         description: Unauthorized:Please Login.
  *         content:
@@ -333,7 +338,7 @@ router.get('/workshops/:workshopId', auth, getWorkshopById);
  *                 success:
  *                   type: boolean
  *                   example: false
- *       404: 
+ *       404:
  *         description: No workshops found.
  *         content:
  *           application/json:
@@ -359,13 +364,13 @@ router.get('/workshops/:workshopId', auth, getWorkshopById);
  *                  success:
  *                    type: boolean
  *                    example: false
- *  
+ *
  *  @route     POST api/workshops/{workshopId}/register
  * @desc       Register for a workshop
  * @access     Private
  */
 
-router.post('/workshops/:workshopId/register', auth, registerForWorkshop);
+router.post("/workshops/:workshopId/register", registerForWorkshop);
 
 /**
  * @route     POST api/workshops/
@@ -444,7 +449,7 @@ router.post('/workshops/:workshopId/register', auth, registerForWorkshop);
  *        description:
  *        type: string
  *       example: "Learn how to manage your time effectively."
- *       workshopImage: 
+ *       workshopImage:
  *       type: string
  *      example: "https://example.com/image.jpg"
  *       facilitator:
@@ -505,12 +510,24 @@ router.post('/workshops/:workshopId/register', auth, registerForWorkshop);
 
 // router.post('/workshops/create', auth, authorizeRole('admin'), upload.fields([
 //    { name: 'workshopImage', maxCount: 1 },
-//    { name: 'resource', maxCount: 5 } 
+//    { name: 'resource', maxCount: 5 }
 // ]), createWorkshop);
 
-router.post('/workshops', auth, authorizeRole('admin'),upload.single('workshopImage'), createWorkshop);
+router.post(
+  "/workshops",
+  auth,
+  authorizeRole("admin"),
+  upload.single("workshopImage"),
+  createWorkshop
+);
 
-router.patch('/workshops/:workshopId', auth, authorizeRole('admin'), upload.array('resource', 5), updateWorkshopResources);
+router.patch(
+  "/workshops/:workshopId",
+  auth,
+  authorizeRole("admin"),
+  upload.array("resource", 5),
+  updateWorkshopResources
+);
 /**
  * @swagger
  * /api/v1/workshops/{workshopId}/update:
@@ -549,7 +566,7 @@ router.patch('/workshops/:workshopId', auth, authorizeRole('admin'), upload.arra
  *                 message:
  *                   type: string
  *                   example: "Workshop resources updated successfully."
- * 
+ *
  * @route    PATCH api/workshops/:workshopId
  * @desc     Update workshop resources
  * @access   Private
@@ -589,19 +606,30 @@ router.patch('/workshops/:workshopId', auth, authorizeRole('admin'), upload.arra
  *                   example: "Workshop deleted successfully."
  */
 
-router.delete('/workshops/:workshopId', auth, authorizeRole('admin'), deleteWorkshop);
+router.delete(
+  "/workshops/:workshopId",
+  auth,
+  authorizeRole("admin"),
+  deleteWorkshop
+);
 
 /**
  * @route   PUT api/workshops/{workshopId}
  * @desc    Update a workshop
  * @access  Private
- */   
+ */
 // router.put('/workshops/:workshopId', auth, authorizeRole('admin'), upload.fields([
 //    { name: 'workshopImage', maxCount: 1 },
 //    { name: 'resource', maxCount: 5 }
 // ]), updateWorkshop);
 
-router.put('/workshops/:workshopId', auth, authorizeRole('admin'), upload.single('workshopImage'), updateWorkshop);
+router.put(
+  "/workshops/:workshopId",
+  auth,
+  authorizeRole("admin"),
+  upload.single("workshopImage"),
+  updateWorkshop
+);
 
 /**
  * @swagger
@@ -639,16 +667,19 @@ router.put('/workshops/:workshopId', auth, authorizeRole('admin'), upload.single
  * @desc     Get all attendees for a workshop
  * @access   Private
  */
-router.get('/workshops/:workshopId/attendees', auth, authorizeRole('admin'), getWorkshopAttendees);
-
-
+router.get(
+  "/workshops/:workshopId/attendees",
+  auth,
+  authorizeRole("admin"),
+  getWorkshopAttendees
+);
 
 /**
  * @route    Post api/workshops/{workshopId}/unregister
  * @desc     Unregister from a workshop
  * @access   Private
  */
-router.post('/workshops/:workshopId/unregister', auth, unregisterFromWorkshop);
+router.post("/workshops/:workshopId/unregister", auth, unregisterFromWorkshop);
 
 /**
  * @swagger
@@ -705,7 +736,7 @@ router.post('/workshops/:workshopId/unregister', auth, unregisterFromWorkshop);
  * @route    GET api/workshops/all/type={type}&page={page}
  * @desc     Get all workshops
  * @access   Private
- * 
+ *
  * @swagger
  * /api/v1/workshops/all:
  *  get:
@@ -777,8 +808,8 @@ router.post('/workshops/:workshopId/unregister', auth, unregisterFromWorkshop);
  * type: string
  * example: ["1234567890abcdef12345678", "1234567890abcdef12345679", "1234567890abcdef12345680"]
  */
-router.get('/workshops/all/getWorkshops', auth, getAllWorkshops);
+router.get("/workshops/all/getWorkshops", auth, getAllWorkshops);
 
-router.get('/workshops/me/myWorkshops', auth, getMyWorkshops);
+router.get("/workshops/me/myWorkshops", auth, getMyWorkshops);
 
 module.exports = router;
