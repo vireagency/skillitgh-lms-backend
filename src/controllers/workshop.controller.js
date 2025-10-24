@@ -119,9 +119,11 @@ exports.createWorkshop = async (req, res) => {
     try {
       facilitator = JSON.parse(req.body.facilitator);
     } catch (error) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid facilitator data!" });
+      return res.status(400).json({
+        success: false,
+        message: "Invalid facilitator data!",
+        error: error.message,
+      });
     }
 
     if (
@@ -362,10 +364,10 @@ exports.registerForWorkshop = async (req, res) => {
     await user.save();
 
     // Send confirmation email
-    const email = user.email;
-    const subject = "Workshop Registration Confirmation";
-    const text = `You have successfully registered for the workshop: ${workshop.title}. \n\nDetails:\nTitle: ${workshop.title}\nDate: ${workshop.date}\nDuration: ${workshop.duration}\nLocation: ${workshop.location}\nPrice: ${workshop.price}`;
-    await sendMail({ email, subject, text });
+    // const email = user.email;
+    // const subject = "Workshop Registration Confirmation";
+    // const text = `You have successfully registered for the workshop: ${workshop.title}. \n\nDetails:\nTitle: ${workshop.title}\nDate: ${workshop.date}\nDuration: ${workshop.duration}\nLocation: ${workshop.location}\nPrice: ${workshop.price}`;
+    // await sendMail({ email, subject, text });
 
     // Send notification to admin or facilitator
     const notification = await Notification.create({
