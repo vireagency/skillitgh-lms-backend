@@ -279,9 +279,9 @@ exports.registerSharedWorkshop = async (req, res) => {
       });
     }
 
-    const subject = "Workshop Registration Confirmation";
-    const text = `You have successfully registered for the workshop: ${workshop.title}. \n\nDetails:\nTitle: ${workshop.title}\nDate: ${workshop.date}\nDuration: ${workshop.duration}\nLocation: ${workshop.location}\nPrice: ${workshop.price}`;
-    await sendMail({ email, subject, text });
+    // const subject = "Workshop Registration Confirmation";
+    // const text = `You have successfully registered for the workshop: ${workshop.title}. \n\nDetails:\nTitle: ${workshop.title}\nDate: ${workshop.date}\nDuration: ${workshop.duration}\nLocation: ${workshop.location}\nPrice: ${workshop.price}`;
+    // await sendMail({ email, subject, text });
 
     const notification = await Notification.create({
       userId: null,
