@@ -1,9 +1,11 @@
 const Workshop = require("../models/workshop.model");
 const User = require("../models/user.model");
 const Register = require("../models/register.model");
-const { sendMail } = require("../utils/email.transport");
+// const { sendMail } = require("../utils/email.transport");
 const Notification = require("../models/notification.model");
 const cloudinary = require("../utils/cloudinaryHelper");
+const { generateUniqueShareId } = require("../utils/hash");
+import("nanoid");
 
 exports.getUpcomingWorkshops = async (req, res) => {
   try {
@@ -107,6 +109,33 @@ exports.getWorkshopById = async (req, res) => {
   }
 };
 
+exports.getSharedWorkshop = async (req, res) => {
+  try {
+    const { shareId } = req.params;
+    if (!shareId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Share ID is required!" });
+    }
+
+    const workshop = await Workshop.findOne({ shareId });
+    if (!workshop) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Workshop not found!" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Workshop details fetched successfully.",
+      workshop,
+    });
+  } catch (error) {
+    console.error("Error fetching workshop by ID:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
+
 exports.createWorkshop = async (req, res) => {
   try {
     const { title, description, date, duration, location, price } = req.body;
@@ -154,6 +183,8 @@ exports.createWorkshop = async (req, res) => {
       });
     }
 
+    const shareId = await generateUniqueShareId(8);
+
     const newWorkshop = new Workshop({
       title,
       description,
@@ -164,6 +195,7 @@ exports.createWorkshop = async (req, res) => {
       facilitator,
       price,
       location,
+      shareId,
     });
 
     // if (req.files && req.files.length > 0) {
