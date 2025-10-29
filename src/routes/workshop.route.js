@@ -6,6 +6,7 @@ const {
   getUpcomingWorkshops,
   getPreviousWorkshops,
   getWorkshopById,
+  getSharedWorkshop,
   registerForWorkshop,
   registerSharedWorkshop,
   createWorkshop,
@@ -271,6 +272,13 @@ router.get(
   authorizeRole("admin"),
   getRegisteredWorkshops
 );
+
+/**
+ * @route      GET api/v1/workshops/:shareId
+ * @desc       Get workshop by share ID
+ * @access     Public
+ */
+router.get("/workshops/:shareId", getSharedWorkshop);
 
 /**
  *  @route     GET api/workshops/:workshopId
