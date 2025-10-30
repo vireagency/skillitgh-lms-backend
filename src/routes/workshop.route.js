@@ -141,7 +141,7 @@ const { upload } = require("../middlewares/multer.middleware");
  * @access     Public
  */
 
-router.get("/workshops/upcoming", auth, getUpcomingWorkshops);
+router.get("/workshops/upcoming", getUpcomingWorkshops);
 
 /**
  *  @swagger
