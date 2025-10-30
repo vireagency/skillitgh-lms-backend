@@ -1,22 +1,22 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const courseController = require('../controllers/course.controller');
-const { upload } = require('../middlewares/multer.middleware');
+const courseController = require("../controllers/course.controller");
+const { upload } = require("../middlewares/multer.middleware");
 
-const { auth } = require('../middlewares/auth.middleware');
-const { authorizeRole } = require('../middlewares/role.middleware');
+const { auth } = require("../middlewares/auth.middleware");
+const { authorizeRole } = require("../middlewares/role.middleware");
 
 /** @route    GET api/v1/courses/
- * @desc      Fetch all courses 
+ * @desc      Fetch all courses
  * @access    Public
-*/
-router.get('/courses', auth, courseController.getCourses);
+ */
+router.get("/courses", courseController.getCourses);
 
 /** @route    GET api/v1/courses/:courseId/
  * @desc      Fetch a course by ID
  * @access    Public
  */
-router.get('/:courseId', auth, courseController.getCourseById);
+router.get("/:courseId", auth, courseController.getCourseById);
 
 /**
  * @swagger
@@ -55,7 +55,7 @@ router.get('/:courseId', auth, courseController.getCourseById);
  *                 message:
  *                   type: string
  *                   example: "Successfully registered for the course."
- *                 success: 
+ *                 success:
  *                   type: boolean
  *                   example: true
  *                 course:
@@ -72,7 +72,7 @@ router.get('/:courseId', auth, courseController.getCourseById);
  *                     example: "I want to learn more about this topic."
  *       400:
  *          description: Course title is required or You have already registered for this course.
- *          content: 
+ *          content:
  *            application/json:
  *              schema:
  *                type: object
@@ -82,7 +82,7 @@ router.get('/:courseId', auth, courseController.getCourseById);
  *                    example: "Course title is required or You have already registered for this course."
  *                  success:
  *                    type: boolean
- *                    example: true              
+ *                    example: true
  *       500:
  *         description: Internal Server Error
  *         content:
@@ -98,21 +98,27 @@ router.get('/:courseId', auth, courseController.getCourseById);
  *                   example: false
  */
 
-/** 
- * @route    POST api/v1/courses/register/ 
+/**
+ * @route    POST api/v1/courses/register/
  * @desc      Register for a course
  * @access    Private
  */
-router.post('/courses/register', auth, courseController.registerForCourse);
+router.post("/courses/register", auth, courseController.registerForCourse);
 
-/** 
- * @route    POST api/v1/courses/ 
+/**
+ * @route    POST api/v1/courses/
  * @desc      Create a new course
  * @access    Private (admin only)
  */
-router.post('/courses', auth, authorizeRole('admin'), upload.single('courseImage'), courseController.createCourse);
+router.post(
+  "/courses",
+  auth,
+  authorizeRole("admin"),
+  upload.single("courseImage"),
+  courseController.createCourse
+);
 
-/** 
+/**
  * @swagger
  * /api/v1/dashboard/registeredCourses:
  *   get:
@@ -150,7 +156,7 @@ router.post('/courses', auth, authorizeRole('admin'), upload.single('courseImage
  *                       courseImage:
  *                         type: string
  *                         example: "https://example.com/course-image.jpg"
- * 
+ *
  *       401:
  *         description: Unauthorized:Please Login.
  *         content:
@@ -164,7 +170,7 @@ router.post('/courses', auth, authorizeRole('admin'), upload.single('courseImage
  *                 success:
  *                   type: boolean
  *                   example: false
- *       404: 
+ *       404:
  *         description: No registered course found.
  *         content:
  *           application/json:
@@ -190,16 +196,20 @@ router.post('/courses', auth, authorizeRole('admin'), upload.single('courseImage
  *                  success:
  *                    type: boolean
  *                    example: false
- * 
- * 
- * 
+ *
+ *
+ *
  * @route    GET api/v1/dashboard/registeredCourses
  * @desc      GET all registered courses for a user
  * @access    Private
  */
-router.get('/dashboard/registeredCourses', auth, courseController.getRegisteredCourses);
+router.get(
+  "/dashboard/registeredCourses",
+  auth,
+  courseController.getRegisteredCourses
+);
 
-/** 
+/**
  * @route    GET api/v1/dashboard/registeredUsers
  * @desc      GET all registered users for a course
  * @access    Private (admin only)
@@ -255,8 +265,12 @@ router.get('/dashboard/registeredCourses', auth, courseController.getRegisteredC
  * type: string
  * example: "user"
  */
-router.get('/dashboard/:courseId/registeredUsers', auth, authorizeRole('admin'), courseController.getRegisteredUsers);
-
+router.get(
+  "/dashboard/:courseId/registeredUsers",
+  auth,
+  authorizeRole("admin"),
+  courseController.getRegisteredUsers
+);
 
 /**
  * @swagger
@@ -296,7 +310,7 @@ router.get('/dashboard/:courseId/registeredUsers', auth, authorizeRole('admin'),
  *                       courseImage:
  *                         type: string
  *                         example: "https://example.com/course-image.jpg"
- * 
+ *
  *       401:
  *         description: Unauthorized:Please Login.
  *         content:
@@ -310,7 +324,7 @@ router.get('/dashboard/:courseId/registeredUsers', auth, authorizeRole('admin'),
  *                 success:
  *                   type: boolean
  *                   example: false
- *       404: 
+ *       404:
  *         description: No registered course found.
  *         content:
  *           application/json:
@@ -335,13 +349,13 @@ router.get('/dashboard/:courseId/registeredUsers', auth, authorizeRole('admin'),
  *                    example: "Internal Server Error"
  *                  success:
  *                    type: boolean
- *                    example: false 
- * 
+ *                    example: false
+ *
  * @route    GET api/v1/dashboard/otherCourses
  * @desc      GET all other courses
- * @access    Private 
+ * @access    Private
  */
-router.get('/dashboard/otherCourses', auth, courseController.getOtherCourses);
+router.get("/dashboard/otherCourses", auth, courseController.getOtherCourses);
 
 /**
  * @swagger
@@ -389,7 +403,7 @@ router.get('/dashboard/otherCourses', auth, courseController.getOtherCourses);
  *                       courseImage:
  *                         type: string
  *                         example: "https://example.com/course-image.jpg"
- * 
+ *
  *       401:
  *         description: Unauthorized:Please Login.
  *         content:
@@ -403,7 +417,7 @@ router.get('/dashboard/otherCourses', auth, courseController.getOtherCourses);
  *                 success:
  *                   type: boolean
  *                   example: false
- *       404: 
+ *       404:
  *         description: No registered course found.
  *         content:
  *           application/json:
@@ -429,18 +443,22 @@ router.get('/dashboard/otherCourses', auth, courseController.getOtherCourses);
  *                  success:
  *                    type: boolean
  *                    example: false
- *  
- * @route   GET api/v1/dashboard/{courseId}/register 
+ *
+ * @route   GET api/v1/dashboard/{courseId}/register
  * @desc     Register for other courses
  * @access   Private
  */
-router.post('/dashboard/:courseId/register', auth, courseController.registerForOtherCourses);
+router.post(
+  "/dashboard/:courseId/register",
+  auth,
+  courseController.registerForOtherCourses
+);
 
 /**
  * @route   DELETE api/v1/courses/:courseId
  * @desc    Delete a course
  * @access  Private (admin only)
- * 
+ *
  * @swagger
  * /api/v1/courses/{courseId}:
  *   delete:
@@ -482,7 +500,12 @@ router.post('/dashboard/:courseId/register', auth, courseController.registerForO
  * type: string
  * example: "https://example.com/course-image.jpg"
  */
-router.delete('/courses/:courseId', auth, authorizeRole('admin'), courseController.deleteCourse);
+router.delete(
+  "/courses/:courseId",
+  auth,
+  authorizeRole("admin"),
+  courseController.deleteCourse
+);
 
 /**
  * @route   PUT api/v1/courses/:courseId
@@ -529,15 +552,24 @@ router.delete('/courses/:courseId', auth, authorizeRole('admin'), courseControll
  *  type: string
  * example: "https://example.com/course-image.jpg"
  */
-router.put('/courses/:courseId', auth, authorizeRole('admin'), upload.single('courseImage'), courseController.updateCourse);
+router.put(
+  "/courses/:courseId",
+  auth,
+  authorizeRole("admin"),
+  upload.single("courseImage"),
+  courseController.updateCourse
+);
 
 /**
  * @route   POST api/v1/dashboard/:courseId/unregister
  * @desc    Unregister from a course
  * @access  Private
  */
-router.post('/dashboard/:courseId/unregister', auth, courseController.unregisterFromCourse);
-
+router.post(
+  "/dashboard/:courseId/unregister",
+  auth,
+  courseController.unregisterFromCourse
+);
 
 /**
  * @route    POST api/v1/dashboard/metrics
@@ -577,9 +609,14 @@ router.post('/dashboard/:courseId/unregister', auth, courseController.unregister
  *         example: 20
  *         totalRegisteredUsers:
  *          type: number
- *        example: 80 
+ *        example: 80
  */
-router.get('/dashboard/metrics', auth, authorizeRole('admin'), courseController.getDashboardMetrics);
+router.get(
+  "/dashboard/metrics",
+  auth,
+  authorizeRole("admin"),
+  courseController.getDashboardMetrics
+);
 /**
  * @swagger
  * /api/v1/dashboard/:courseId/unregister:
@@ -612,19 +649,29 @@ router.get('/dashboard/metrics', auth, authorizeRole('admin'), courseController.
  *
  */
 
-/** 
+/**
  * @route     GET api/v1/dashboard/registeredCourses
  * @desc      Get all registered courses in the system
  * @access    Private (admin only)
  */
 
-router.get("/dashboard/admin/courses", auth, authorizeRole('admin'), courseController.getRegisteredCoursesByAdmin);
+router.get(
+  "/dashboard/admin/courses",
+  auth,
+  authorizeRole("admin"),
+  courseController.getRegisteredCoursesByAdmin
+);
 
 /**
  * @route     GET api/v1/dashboard/registeredUsers
- * @desc      Get all registered courses and users 
+ * @desc      Get all registered courses and users
  * @access    Private (admin only)
  */
-router.get("/dashboard/students", auth, authorizeRole('admin'), courseController.getRegisteredUsersByAdmin);
+router.get(
+  "/dashboard/students",
+  auth,
+  authorizeRole("admin"),
+  courseController.getRegisteredUsersByAdmin
+);
 
 module.exports = router;
