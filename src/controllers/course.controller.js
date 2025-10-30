@@ -9,7 +9,9 @@ const cloudinaryHelper = require("../utils/cloudinaryHelper");
 
 exports.getCourses = async (req, res) => {
   try {
-    const courses = await Course.find().sort("title");
+    const courses = await Course.find()
+      .sort("title")
+      .select("-registeredUsers");
     if (!courses) {
       return res
         .status(404)
