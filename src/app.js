@@ -44,8 +44,7 @@ app.use(cors({
     process.env.client_URL,
     process.env.client_URL_PROD1,
     process.env.client_URL_PROD2,
-    "https://skillitgh-lms-frontend-git-main-king1081s-projects.vercel.app",
-    "https://skillitgh-lms-frontend-385b239si-king1081s-projects.vercel.app"
+    process.env.FRONTEND_URL
   ],
   credentials: true,
 }));
