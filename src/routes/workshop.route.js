@@ -278,7 +278,7 @@ router.get(
  * @desc       Get workshop by share ID
  * @access     Public
  */
-router.get("/workshops/:shareId", getSharedWorkshop);
+router.get("/public/:shareId", getSharedWorkshop);
 
 /**
  *  @route     GET api/workshops/:workshopId

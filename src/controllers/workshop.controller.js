@@ -5,7 +5,6 @@ const Register = require("../models/register.model");
 const Notification = require("../models/notification.model");
 const cloudinary = require("../utils/cloudinaryHelper");
 const { generateUniqueShareId } = require("../utils/hash");
-import("nanoid");
 
 exports.getUpcomingWorkshops = async (req, res) => {
   try {
