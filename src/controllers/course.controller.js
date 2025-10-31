@@ -104,12 +104,12 @@ exports.registerForCourse = async (req, res) => {
     await course.save();
 
     // Send email to user
-    const emailData = {
-      email: user.email,
-      subject: "Course Registration Confirmation",
-      text: `Congratulations ${user.firstName}!\n\nYou have successfully registered for the SkillitGh ${course.title} course.`,
-    };
-    await sendMail(emailData);
+    // const emailData = {
+    //   email: user.email,
+    //   subject: "Course Registration Confirmation",
+    //   text: `Congratulations ${user.firstName}!\n\nYou have successfully registered for the SkillitGh ${course.title} course.`,
+    // };
+    // await sendMail(emailData);
 
     // // Send notification to user
     const notification = await Notification.create({
@@ -365,13 +365,13 @@ exports.registerForOtherCourses = async (req, res) => {
     await existingCourse.save();
 
     // Send email to user
-    const emailData = {
-      email: user.email,
-      subject: "Course Registration Confirmation",
-      text: `Congratulations ${user.firstName}!\n\nYou have successfully registered for the SkillitGh ${existingCourse.title} course.`,
-    };
+    // const emailData = {
+    //   email: user.email,
+    //   subject: "Course Registration Confirmation",
+    //   text: `Congratulations ${user.firstName}!\n\nYou have successfully registered for the SkillitGh ${existingCourse.title} course.`,
+    // };
 
-    await sendMail(emailData);
+    // await sendMail(emailData);
 
     // Send notification to user
     const notification = await Notification.create({
