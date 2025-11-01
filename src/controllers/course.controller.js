@@ -116,6 +116,7 @@ exports.registerForCourse = async (req, res) => {
       userId,
       type: "course",
       message: `${user.firstName} just registered for the ${course.title} course.`,
+      userMessage: `You have successfully registered for the ${course.title} course.`,
     });
     if (!notification) {
       return res
@@ -378,6 +379,7 @@ exports.registerForOtherCourses = async (req, res) => {
       userId,
       type: "course",
       message: `${user.firstName} just registered for the ${existingCourse.title} course.`,
+      userMessage: `You have successfully registered for the ${existingCourse.title} course.`,
     });
     if (!notification) {
       return res
