@@ -320,6 +320,7 @@ exports.registerSharedWorkshop = async (req, res) => {
       userId: null,
       type: "workshop",
       message: `${fullName} just registered for the ${workshop.title} workshop.`,
+      userMessage: `You have successfully registered for the ${workshop.title} workshop.`,
     });
 
     if (!notification) {
@@ -405,6 +406,7 @@ exports.registerForWorkshop = async (req, res) => {
       userId,
       type: "workshop",
       message: `${user.firstName} just registered for the ${workshop.title} workshop.`,
+      userMessage: `You have successfully registered for the ${workshop.title} workshop.`,
     });
     if (!notification) {
       return res
