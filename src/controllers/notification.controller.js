@@ -13,7 +13,8 @@ exports.getAllNotifications = async (req, res) => {
 
     const notifications = await Notification.find()
       .populate("userId", "firstName lastName userImage email")
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .select("-userMessage");
     if (!notifications) {
       return res
         .status(404)
@@ -142,9 +143,11 @@ exports.findNotificationsByUserId = async (req, res) => {
         .status(400)
         .json({ success: false, message: "Unauthorized: Please Login" });
     }
-    const notifications = await Notification.find({ userId }).sort({
-      createdAt: -1,
-    });
+    const notifications = await Notification.find({ userId })
+      .sort({
+        createdAt: -1,
+      })
+      .select("-message");
 
     if (!notifications || notifications.length === 0) {
       return res.status(200).json({
