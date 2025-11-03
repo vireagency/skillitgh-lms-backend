@@ -1,23 +1,24 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { 
-  getUserProfile, 
-  updateUserProfile, 
-  deleteUserProfile, 
+const {
+  getUserProfile,
+  updateUserProfile,
+  deleteUserProfile,
   getAllUsers,
   deleteUserProfileByAdmin,
   updateUserProfileByAdmin,
-  getUserProfileByAdmin
-} = require('../controllers/user.controller');
-const { auth } = require('../middlewares/auth.middleware');
-const { authorizeRole } = require('../middlewares/role.middleware');
-const { upload } = require('../middlewares/multer.middleware');
+  getUserProfileByAdmin,
+  getAllUsersProfile,
+} = require("../controllers/user.controller");
+const { auth } = require("../middlewares/auth.middleware");
+const { authorizeRole } = require("../middlewares/role.middleware");
+const { upload } = require("../middlewares/multer.middleware");
 
 /**
  * @route    GET api/v1/dashboard/profile
  * @desc     Get user profile
  * @access   Private
- * 
+ *
  * @swagger
  * /api/v1/dashboard/profile:
  *  get:
@@ -49,7 +50,7 @@ const { upload } = require('../middlewares/multer.middleware');
  *         type: string
  *        userImage:
  *        type: string
- * 
+ *
  * example:
  *  user:
  *  firstName: John
@@ -57,13 +58,13 @@ const { upload } = require('../middlewares/multer.middleware');
  * email: example.com
  * userImage: https://example.com/user-image.jpg
  */
-router.get('/dashboard/profile', auth, getUserProfile);
+router.get("/dashboard/profile", auth, getUserProfile);
 
 /**
  * @route    PUT api/v1/dashboard/profile
  * @desc     Update user profile
  * @access   Private
- * 
+ *
  * @swagger
  * /api/v1/dashboard/profile:
  *  put:
@@ -126,13 +127,18 @@ router.get('/dashboard/profile', auth, getUserProfile);
  * type: string
  * example: https://example.com/user-image.jpg
  */
-router.put('/dashboard/profile', auth, upload.single('userImage'), updateUserProfile);
+router.put(
+  "/dashboard/profile",
+  auth,
+  upload.single("userImage"),
+  updateUserProfile
+);
 
-/** @  
+/** @
  * @route    DELETE api/v1/dashboard/profile
  * @desc     Delete user profile
  * @access   Private
- * 
+ *
  * @swagger
  * /api/v1/dashboard/profile:
  * delete:
@@ -159,15 +165,20 @@ router.put('/dashboard/profile', auth, upload.single('userImage'), updateUserPro
  * success:
  * type: boolean
  * example: true
- * 
+ *
  */
-router.delete('/dashboard/profile', auth, authorizeRole('admin'), deleteUserProfile)
+router.delete(
+  "/dashboard/profile",
+  auth,
+  authorizeRole("admin"),
+  deleteUserProfile
+);
 
 /**
  * @route    GET api/v1/dashboard/users
  * @desc     Get all users on the platform
  * @access   Private
- * 
+ *
  * @swagger
  * /api/v1/dashboard/users:
  * get:
@@ -203,7 +214,7 @@ router.delete('/dashboard/profile', auth, authorizeRole('admin'), deleteUserProf
  * type: string
  * role:
  * type: string
- * 
+ *
  * example:
  * users:
  * - firstName: John
@@ -211,29 +222,52 @@ router.delete('/dashboard/profile', auth, authorizeRole('admin'), deleteUserProf
  * email: example.com
  * userImage: https://example.com/user-image.jpg
  * role: user
- * 
+ *
  */
-router.get('/dashboard/users', auth, authorizeRole('admin'), getAllUsers);
+router.get("/dashboard/users", auth, authorizeRole("admin"), getAllUsers);
 
-/** 
+/**
+ * @route   GET api/v1/dashboard/users/profile
+ * @desc    Get all users' profiles
+ * @access  Private
+ */
+router.get("/dashboard/users/profile", getAllUsersProfile);
+
+/**
  * @route    DELETE api/v1/dashboard/users/:userId
  * @desc     Delete user profile by admin
  * @access   Private
  */
-router.delete('/dashboard/users/:userId', auth, authorizeRole('admin'), deleteUserProfileByAdmin);
+router.delete(
+  "/dashboard/users/:userId",
+  auth,
+  authorizeRole("admin"),
+  deleteUserProfileByAdmin
+);
 
 /**
- * @route     PUT api/v1/dashboard/users/:userId  
+ * @route     PUT api/v1/dashboard/users/:userId
  * @desc      Update user profile by admin
  * @access    Private
  */
-router.put('/dashboard/users/:userId', auth, authorizeRole('admin'), upload.single('userImage'), updateUserProfileByAdmin);
+router.put(
+  "/dashboard/users/:userId",
+  auth,
+  authorizeRole("admin"),
+  upload.single("userImage"),
+  updateUserProfileByAdmin
+);
 
 /**
  * @route     GET api/v1/dashboard/users/:userId
  * @desc      Get user profile by admin
  * @access    Private
  */
-router.get('/dashboard/users/:userId', auth, authorizeRole('admin'), getUserProfileByAdmin);
+router.get(
+  "/dashboard/users/:userId",
+  auth,
+  authorizeRole("admin"),
+  getUserProfileByAdmin
+);
 
 module.exports = router;
