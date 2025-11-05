@@ -380,7 +380,7 @@ router.get("/workshops/:workshopId", getWorkshopById);
  */
 
 router.post("/workshops/:workshopId/register", auth, registerForWorkshop);
-router.post("/admin/workshops/:workshopId/register", registerSharedWorkshop);
+router.post("/admin/workshops/:shareId/register", registerSharedWorkshop);
 
 /**
  * @route     POST api/workshops/

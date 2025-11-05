@@ -264,8 +264,14 @@ exports.deleteWorkshop = async (req, res) => {
 
 exports.registerSharedWorkshop = async (req, res) => {
   try {
-    const { workshopId } = req.params;
+    const { shareId } = req.params;
     const { fullName, email, phoneNumber } = req.body;
+
+    if (!shareId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Share ID is required!" });
+    }
 
     if (!fullName || !email) {
       return res
@@ -273,7 +279,7 @@ exports.registerSharedWorkshop = async (req, res) => {
         .json({ success: false, message: "All fields are required!" });
     }
 
-    const workshop = await Workshop.findById(workshopId);
+    const workshop = await Workshop.findOne({ shareId });
     if (!workshop) {
       return res
         .status(404)
@@ -289,6 +295,8 @@ exports.registerSharedWorkshop = async (req, res) => {
         message: "Cannot register for a past workshop!",
       });
     }
+
+    const workshopId = workshop._id;
 
     const registeredUser = await Register.findOne({ workshopId, email });
     if (registeredUser) {
