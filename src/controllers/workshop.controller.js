@@ -296,7 +296,9 @@ exports.registerSharedWorkshop = async (req, res) => {
       });
     }
 
-    const registeredUser = await Register.findOne({ shareId, email });
+    const workshopId = workshop._id;
+
+    const registeredUser = await Register.findOne({ workshopId, email });
     if (registeredUser) {
       return res.status(400).json({
         success: false,
@@ -305,7 +307,7 @@ exports.registerSharedWorkshop = async (req, res) => {
     }
 
     const newRegistration = await Register.create({
-      shareId,
+      workshopId,
       fullName,
       email,
       phoneNumber,
