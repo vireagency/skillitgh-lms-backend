@@ -50,6 +50,7 @@ app.use(
       process.env.FRONTEND_URL,
       process.env.skillit_lms,
       process.env.skillitgh,
+      process.env.VERCEL_URL,
     ],
     credentials: true,
   })
