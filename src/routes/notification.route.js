@@ -24,7 +24,6 @@ router.get("/dashboard/user/notifications", auth, findNotificationsByUserId);
 router.put(
   "/dashboard/notifications/:notificationId",
   auth,
-  authorizeRole("admin"),
   markNotificationAsRead
 );
 
