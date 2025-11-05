@@ -24,29 +24,17 @@ router.get("/dashboard/user/notifications", auth, findNotificationsByUserId);
 router.put(
   "/dashboard/notifications/:notificationId",
   auth,
-  authorizeRole("admin"),
   markNotificationAsRead
 );
 
 router.delete(
   "/dashboard/notifications/:notificationId",
   auth,
-  authorizeRole("admin"),
   deleteNotification
 );
 
-router.delete(
-  "/dashboard/notifications",
-  auth,
-  authorizeRole("admin"),
-  deleteAllNotificationsByAdmin
-);
+router.delete("/dashboard/notifications", auth, deleteAllNotificationsByAdmin);
 
-router.put(
-  "/dashboard/notifications",
-  auth,
-  authorizeRole("admin"),
-  markAllNotificationsAsReadByAdmin
-);
+router.put("/dashboard/notifications", auth, markAllNotificationsAsReadByAdmin);
 
 module.exports = router;
