@@ -687,6 +687,7 @@ exports.getRegisteredSharedWorkshops = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "These are the registered shared workshops.",
+      registrations,
       registrationCount,
       countPerWorkshop,
       attendeesPerWorkshop,
