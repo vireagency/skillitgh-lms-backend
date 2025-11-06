@@ -578,6 +578,7 @@ exports.unregisterFromWorkshop = async (req, res) => {
     const isRegistered =
       workshop.attendees.includes(userId) &&
       user.workshops.includes(workshopId);
+
     if (!isRegistered) {
       return res.status(400).json({
         success: false,
@@ -614,10 +615,7 @@ exports.getRegisteredWorkshops = async (req, res) => {
         .status(404)
         .json({ success: false, message: "No registered workshops found!" });
     }
-    // const registeredWorkshops = workshops.filter((member) => member.attendees.length > 0)
-    // if (!registeredWorkshops || registeredWorkshops.length === 0) {
-    //   return res.status(404).json({ success: false, message: "No registered workshops found!" });
-    // }
+
     //const workshopCount = workshops.reduce((acc, workshop) => acc + workshop.attendees.length, 0);
     const workshopCount = await Workshop.countDocuments({
       attendees: { $not: { $size: 0 } },
@@ -642,6 +640,59 @@ exports.getRegisteredWorkshops = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in getting all registered workshops:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
+
+exports.getRegisteredSharedWorkshops = async (req, res) => {
+  try {
+    const registrations = await Register.find().populate(
+      "workshopId",
+      "title description date"
+    );
+
+    if (!registrations || registrations.length === 0) {
+      return res.status(200).json({
+        success: false,
+        message: "No registered shared workshops found!",
+      });
+    }
+
+    const registrationCount = registrations.length;
+
+    const attendeesPerWorkshop = {};
+    registrations.forEach((registration) => {
+      const workshopTitle = registration.workshopId.title;
+      if (!attendeesPerWorkshop[workshopTitle]) {
+        attendeesPerWorkshop[workshopTitle] = [];
+      }
+      attendeesPerWorkshop[workshopTitle].push({
+        registrationId: registration._id,
+        fullName: registration.fullName,
+        email: registration.email,
+        phoneNumber: registration.phoneNumber,
+      });
+    });
+
+    const countPerWorkshop = {};
+    registrations.forEach((registration) => {
+      const workshopTitle = registration.workshopId.title;
+      if (countPerWorkshop[workshopTitle]) {
+        countPerWorkshop[workshopTitle] += 1;
+      } else {
+        countPerWorkshop[workshopTitle] = 1;
+      }
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "These are the registered shared workshops.",
+      registrationCount,
+      countPerWorkshop,
+      attendeesPerWorkshop,
+    });
+  } catch (error) {
+    console.error("Error in getting all registered shared workshops:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
