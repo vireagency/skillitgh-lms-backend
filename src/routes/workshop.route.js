@@ -16,6 +16,7 @@ const {
   unregisterFromWorkshop,
   updateWorkshop,
   getRegisteredWorkshops,
+  getRegisteredSharedWorkshops,
   getAllWorkshops,
   getMyWorkshops,
 } = require("../controllers/workshop.controller");
@@ -271,6 +272,18 @@ router.get(
   auth,
   authorizeRole("admin"),
   getRegisteredWorkshops
+);
+
+/**
+ * @route    GET api/v1/workshops/public/attendees
+ * @desc     Get all attendees for a shared workshop
+ * @access   Public
+ */
+router.get(
+  "/workshops/public/attendees",
+  auth,
+  authorizeRole("admin"),
+  getRegisteredSharedWorkshops
 );
 
 /**
